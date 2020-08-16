@@ -1,0 +1,33 @@
+{
+  "name": "vexere-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node .",
+    "start:watch": "nodemon .",
+    "debug:watch": "DEBUG=* nodemon .",
+    "start:staging": "set NODE_ENV=staging& node .",
+    "start:local": "set NODE_ENV=local& node ."
+  },
+  "keywords": [],
+  "author": "TriMinh",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "cloudinary": "^1.22.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "fs-extra": "^9.0.1",
+    "hogan.js": "^3.0.2",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.15",
+    "mongoose": "^5.9.19",
+    "multer": "^1.4.2",
+    "nodemailer": "^6.4.10",
+    "nodemon": "^2.0.4",
+    "random-js": "^2.1.0",
+    "validator": "^13.1.1"
+  }
+}
