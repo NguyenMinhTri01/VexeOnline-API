@@ -1,28 +1,28 @@
 const mongoose = require('mongoose');
 const urlSlug = require('url-slug');
 
-const StationSchema = new mongoose.Schema({
+const BlogSchema = new mongoose.Schema({
   name: { type : String, required : true},
   slug : {type : String},
-  address: { type : String, required: true},
-  province: { type : String, required : true},
   hot : {type: Boolean, default : false},
   status : {type: Boolean, default : true},
+  description : {type : String, required : true},
+  content : {type : String, required : true},
   titleSeo : {type : String, required : true},
   descriptionSeo : {type : String, required : true},
   keywordSeo : {type : String, required : true},
   createdAt : {type : Date, default : Date.now},
   updatedAt : {type : Date}
 })
-StationSchema.pre('save', function beforeSave(next) {
-  const station = this;
-  if (!station.isModified("name")) return next();
-  station.slug = urlSlug(station.name);
+BlogSchema.pre('save', function beforeSave(next) {
+  const blog = this;
+  if (!blog.isModified("name")) return next();
+  blog.slug = urlSlug(blog.name);
   next();
 });
 
-const Station = mongoose.model('Station', StationSchema, "Station");
+const Blog = mongoose.model('Blog', BlogSchema, "Blog");
 module.exports = {
-  StationSchema,
-  Station
+  BlogSchema,
+  Blog
 }

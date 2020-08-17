@@ -6,7 +6,9 @@ const UserSchema = new mongoose.Schema({
   password: {type: String, required:true},
   fullName: {type: String, required: true},
   userType: {type: String, default: 'client'},
-  avatar : {type: String, default: null}
+  avatar : {type: String, default: null},
+  createdAt : {type : Date, default : Date.now},
+  updatedAt : Date
 })
 UserSchema.pre('save', function beforeSave(next) {
   const user = this;

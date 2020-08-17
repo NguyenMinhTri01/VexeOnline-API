@@ -2,21 +2,24 @@ const mongoose = require('mongoose');
 const {SeatSchema} = require('../models/Seat');
 
 const TripSchema = new mongoose.Schema({
-  fromStationId : {
-     type: mongoose.Schema.Types.ObjectId,
-     ref : 'Station'
+  garageId : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "Garage"
   },
-  toStationId : {
-    type: mongoose.Schema.Types.ObjectId,
-    ref : 'Station'
+  routeId : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "Route"
   },
-  startTime : {
-    type : Date,
-    require: true,
-    default: Date.now
+  vehicleId : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "Vehicle"
   },
   seats : [SeatSchema],
-  price : {type: Number, default: 0}
+  price : {type: Number, default: 0},
+  note : {type : String , default : ''},
+  status : {type : Boolean, default : true},
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date }
 });
 
 const Trip = mongoose.model('Trip', TripSchema, "Trip");

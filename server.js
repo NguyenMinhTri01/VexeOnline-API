@@ -27,13 +27,6 @@ app.use("/api/users", require("./routes/api/controllers/users"));
 app.use("/api/tickets", require("./routes/api/controllers/tickets"));
 
 app.use('/uploads', express.static("./uploads"));
-
-// app.get('/api/stations', stations.getStations);
-// app.get('/api/stations/:id', stations.getStationsById);
-// app.post('/api/stations', stations.postStations);
-// app.put('/api/stations/:id', stations.putStationById);
-// app.patch('/api/stations/:id', stations.patchStationById);
-// app.delete('/api/stations/:id', stations.deleteStationsById);
 const port = process.env.PORT || config.port 
 app.listen(port, ()=> {
   console.log(`app is running is port ${port}`);
