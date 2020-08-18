@@ -38,7 +38,7 @@ const putStationById = (req, res, next) => {
     //const { name, address, province } = req.body;
     station._doc = {
       ...station._doc,
-      ..._.pick(req.body, ['name', 'address', 'province'])
+      ..._.pick(req.body, ['name', 'address', 'province', 'titleSeo', 'descriptionSeo', 'keywordSeo'])
     }
     // xử lý với Object.keys(station).forEach((key)=> ...);
     return station.save()

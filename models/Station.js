@@ -3,6 +3,7 @@ const urlSlug = require('url-slug');
 
 const StationSchema = new mongoose.Schema({
   name: { type : String, required : true},
+  avatar : {type : String, default : "no Image"},
   slug : {type : String},
   address: { type : String, required: true},
   province: { type : String, required : true},
