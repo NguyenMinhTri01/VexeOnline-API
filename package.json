@@ -8,8 +8,8 @@
     "start": "node .",
     "start:watch": "nodemon .",
     "debug:watch": "DEBUG=* nodemon .",
-    "start:staging": "set NODE_ENV=staging& node .",
-    "start:local": "set NODE_ENV=local& node ."
+    "start:staging": "set NODE_ENV=staging& nodemon .",
+    "start:local": "set NODE_ENV=local& nodemon ."
   },
   "keywords": [],
   "author": "NGUYEN MINH TRI AND TRAN DINH TU",

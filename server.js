@@ -25,7 +25,8 @@ app.use("/api/stations", require("./routes/api/controllers/stations"));
 app.use("/api/trips", require("./routes/api/controllers/trips"));
 app.use("/api/users", require("./routes/api/controllers/users"));
 app.use("/api/tickets", require("./routes/api/controllers/tickets"));
-
+app.use("/api/blogs", require("./routes/api/controllers/blogs"));
+  
 app.use('/uploads', express.static("./uploads"));
 const port = process.env.PORT || config.port 
 app.listen(port, ()=> {
