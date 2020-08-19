@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const {SeatSchema} = require('../models/Seat');
+const { date } = require('random-js');
 
 const TripSchema = new mongoose.Schema({
   garageId : {
@@ -14,6 +15,8 @@ const TripSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : "Vehicle"
   },
+  startTime : {type : Date, required : true},
+  endTime : {type : Date, required : true},
   seats : [SeatSchema],
   price : {type: Number, default: 0},
   note : {type : String , default : ''},
