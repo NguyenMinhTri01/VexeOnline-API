@@ -4,7 +4,7 @@ const urlSlug = require('url-slug');
 const GarageSchema = new mongoose.Schema({
   name: { type : String, required : true},
   slug : {type : String},
-  avatar : {type : String, default : "no image"},
+  avatar : {type : String, default : "/imageDefault/no-image_ljozla"},
   address: { type : String, required: true},
   status : {type: Boolean, default : true},
   content : {type : String, default : ''},

@@ -1,7 +1,5 @@
 const express = require('express');
 const { authenticate, authorize } = require("./../../../../middlewares/auth");
-// const validatePostStation = require ("../../../../middlewares/validation/stations/postStaion");
-// const validatePutStation = require("../../../../middlewares/validation/stations/putStation");
 const { validatePostStation, validatePutStation } = require("./../../../../middlewares/validation/stations");
 
 const stationController = require('./station.controller');
@@ -10,8 +8,10 @@ const router = express.Router();
 
 router.get('/', stationController.getStations);
 router.get('/:id', stationController.getStationsById);
+router.get('/status/:id',authenticate, authorize(["admin"]), stationController.updateStationStatus);
+router.get('/hot/:id',authenticate, authorize(["admin"]), stationController.updateStationHot);
 router.post(
-  '/',
+  '/',  
   authenticate,
   authorize(["admin"]),
   validatePostStation,

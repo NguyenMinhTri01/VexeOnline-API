@@ -82,11 +82,37 @@ const deleteStationsById = (req, res, next) => {
   .catch(err => res.status(500).json(err));
 };
 
+
+const updateStationStatus = (req, res, next) => {
+  const { id } = req.params;
+  Station.findById(id)
+  .then (station => {
+    station.status = !station.status;
+    return station.save()
+  })
+  .then(station => res.status(200).json(station))
+  .catch(err => res.status(500).json(err));
+}
+
+
+const updateStationHot = (req, res, next) => {
+  const { id } = req.params;
+  Station.findById(id)
+  .then (station => {
+    station.hot = !station.hot;
+    return station.save()
+  })
+  .then(station => res.status(200).json(station))
+  .catch(err => res.status(500).json(err));
+}
+
 module.exports = {
   getStations,
   postStations,
   getStationsById,
   putStationById,
   patchStationById,
-  deleteStationsById
+  deleteStationsById,
+  updateStationStatus,
+  updateStationHot
 }
