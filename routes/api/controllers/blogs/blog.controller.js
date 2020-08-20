@@ -69,10 +69,9 @@ const getStatusById = (req,res,next) => {
             message: "Blog not found"
         })
         blog["status"] = !blog["status"];
-        blog.save();
-        return Blog.find()
+        return blog.save();
     })
-    .then(blogs=>res.status(200).json(blogs))
+    .then(blog=>res.status(200).json(blog))
     .catch(err=>res.status(500).json(err))
 
 
