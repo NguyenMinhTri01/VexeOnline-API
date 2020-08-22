@@ -13,10 +13,13 @@ mongoose.connect(mongoUri,{
 const app = express();
 
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, token");
-  res.header("Access-Control-Allow-Methods", "GET", "POST", "PUT", "DELETE", "PATCH");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, token"
+  );
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,PATCH");
   next();
 });
 
@@ -26,6 +29,8 @@ app.use("/api/trips", require("./routes/api/controllers/trips"));
 app.use("/api/users", require("./routes/api/controllers/users"));
 app.use("/api/tickets", require("./routes/api/controllers/tickets"));
 app.use("/api/blogs", require("./routes/api/controllers/blogs"));
+app.use("/api/contacts", require("./routes/api/controllers/contacts"));
+app.use("/api/pagestatics", require("./routes/api/controllers/pageStatics"));
   
 app.use('/uploads', express.static("./uploads"));
 const port = process.env.PORT || config.port 

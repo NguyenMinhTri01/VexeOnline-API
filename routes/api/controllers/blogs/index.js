@@ -2,30 +2,11 @@ const express = require("express");
 const router = express.Router();
 const blogController = require("./blog.controller")
 const { authenticate, authorize } = require("./../../../../middlewares/auth");
+const { validatePostBlog, validatePutBlog } = require("../../../../middlewares/validation/blogs");
 //const {vadidatePostBlog} = require("../../../../middlewares/validation/blogs/postBlog")
 
 router.get("/",blogController.getBlog);
 router.get("/:id",blogController.getBlogById);
-router.post(
-    "/",
-    authenticate,
-    authorize(["admin"]),
-   // vadidatePostBlog,
-    blogController.postBlog
-);
-router.put(
-    "/:id",
-    authenticate,
-    authorize(["admin"]),
-    blogController.putBlogById
-);
-router.delete(
-    "/:id",
-    authenticate,
-    authorize(["admin"]),
-    blogController.deleteBlogById
-);
-
 router.get(
     "/status/:id",
     authenticate,
@@ -39,4 +20,26 @@ router.get(
     authorize(["admin"]),
     blogController.getHotById
 );
+router.post(
+    "/",
+    authenticate,
+    authorize(["admin"]),
+    validatePostBlog,
+    blogController.postBlog
+);
+router.put(
+    "/:id",
+    authenticate,
+    authorize(["admin"]),
+    validatePutBlog,
+    blogController.putBlogById
+);
+router.delete(
+    "/:id",
+    authenticate,
+    authorize(["admin"]),
+    blogController.deleteBlogById
+);
+
+
 module.exports = router;
