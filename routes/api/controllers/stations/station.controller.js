@@ -35,12 +35,10 @@ const putStationById = (req, res, next) => {
       status: 404,
       message: "Station not found"
     });
-    //const { name, address, province } = req.body;
-    station._doc = {
-      ...station._doc,
-      ..._.pick(req.body, ['name', 'address', 'province', 'titleSeo', 'descriptionSeo', 'keywordSeo'])
-    }
-    // xử lý với Object.keys(station).forEach((key)=> ...);
+    const keys = ['name', 'address', 'province', 'titleSeo', 'descriptionSeo', 'keywordSeo']
+    keys.forEach(key=>{
+      station[key] = req.body[key]
+    })
     return station.save()
   })
   .then(station => res.status(200).json(station))
@@ -64,7 +62,7 @@ const patchStationById = (req, res, next) => {
     // if(province) station.province = province;
     return station.save()
   })
-  .then(station => res.status(200).json(station))
+  .then(station => {res.status(200).json(station)})
   .catch(err => res.status(500).json(err));
 };
 
