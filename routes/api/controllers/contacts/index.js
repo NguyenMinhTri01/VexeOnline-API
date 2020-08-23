@@ -10,6 +10,12 @@ router.get(
     authorize(["admin"]),
     contactController.getContact
 );
-router.post("/",contactController.postContact)
+router.post("/",contactController.postContact);
+router.delete(
+    "/:id",
+    authenticate,
+    authorize(["admin"]),
+    contactController.deleteContactById
+);
 
 module.exports = router;
