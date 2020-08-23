@@ -20,6 +20,22 @@ const postContact = (req,res,next)=>{
     })
 }
 
+const deleteContactById = (req,res,next) => {
+    const {id} = req.params;
+    let _contact;
+    Contact.findById(id)
+    .then(contact=>{
+        _contact = contact;
+        if(!contact) return Promise.reject({
+            status: 404,
+            message: "Contact not found"
+        })
+        return Contact.deleteOne({_id:id})
+    })
+    .then(()=>res.status(200).json(_contact))
+    .catch(err=>res.status(500).json(err))
+}
+
 module.exports = {
-    getContact,postContact
+    getContact,postContact,deleteContactById
 }
