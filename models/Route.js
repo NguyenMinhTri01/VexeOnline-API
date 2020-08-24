@@ -14,6 +14,7 @@ const RouteSchema = new mongoose.Schema({
   },
   policy: { type: String, default: '' },
   status: { type: Boolean, default: true },
+  time : {type : Number, required : true},
   titleSeo: { type: String, required: true },
   descriptionSeo: { type: String, required: true },
   keywordSeo: { type: String, required: true },
