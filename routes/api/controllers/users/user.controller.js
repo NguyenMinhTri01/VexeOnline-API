@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const { promisify } = require('util');//built-in package
 const _  = require('lodash');
 const { uploadImageToCloudinary, removeImageFromCloudinary } = require ('../../../../middlewares/uploadImageToCloudinary');
-const { result } = require('lodash');
+
 
 // register users
 const jwtSign = promisify(jwt.sign);
@@ -55,7 +55,7 @@ const uploadAvatar = (req, res, next) => {
     return uploadImageToCloudinary(req.file.path, 'avatar');
   })
   .then( async result => {
-    if (user.avatar) {
+    if (user.avatar && user.avatar != 'VexeOnlineMedia/imageDefault/no-image_ljozla') {
       await removeImageFromCloudinary(user.avatar);
     }
     user.avatar = result.public_id

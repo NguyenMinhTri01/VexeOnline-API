@@ -1,7 +1,7 @@
 const express = require('express');
 const { authenticate, authorize } = require("./../../../../middlewares/auth");
 const { validatePostStation, validatePutStation } = require("./../../../../middlewares/validation/stations");
-
+const { uploadSingleImage } = require("./../../../../middlewares/uploadImages")
 const stationController = require('./station.controller');
 const router = express.Router();
 
@@ -36,6 +36,12 @@ router.delete(
   authorize(["admin"]),
   stationController.deleteStationsById
 );
+router.patch(
+  "/upload-avatar/:id",
+  authenticate,
+  authorize(["admin"]),
+  uploadSingleImage('avatar'),
+  stationController.uploadAvatar);
 
 
 module.exports = router;

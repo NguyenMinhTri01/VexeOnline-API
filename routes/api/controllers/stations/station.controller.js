@@ -1,5 +1,8 @@
 const { Station } = require('../../../../models/Station');
 const _ = require('lodash');
+const { uploadImageToCloudinary, removeImageFromCloudinary } = require ('../../../../middlewares/uploadImageToCloudinary');
+const { result } = require('lodash');
+
 
 const getStations = (req, res, next) => {
   Station.find()
@@ -69,13 +72,23 @@ const patchStationById = (req, res, next) => {
 
 const deleteStationsById = (req, res, next) => {
   const { id } = req.params;
-  Station.deleteOne({_id : id})
-  .then(station => {
-    if (station.deletedCount == 0) return res.status(404).json({
+  Station.findById(id)
+  .then(async station => {
+    if(!station) return res.status(404).json({
+      status: 404,
+      message: "Station not found"
+    }) 
+    if (station.avatar && station.avatar != 'VexeOnlineMedia/imageDefault/no-image_ljozla') {
+      await removeImageFromCloudinary(station.avatar);
+    }
+    return Station.deleteOne({_id : id})
+  })
+  .then(result => {
+    if (result.deletedCount == 0) return res.status(404).json({
       status: 404,
       message: "Station not found"
     })
-    return res.status(200).json(station);
+    return res.status(200).json(result);
   })
   .catch(err => res.status(500).json(err));
 };
@@ -85,6 +98,10 @@ const updateStationStatus = (req, res, next) => {
   const { id } = req.params;
   Station.findById(id)
   .then (station => {
+    if(!station) return new Promise.reject({
+      status: 404,
+      message: "Station not found"
+    });
     station.status = !station.status;
     return station.save()
   })
@@ -97,11 +114,38 @@ const updateStationHot = (req, res, next) => {
   const { id } = req.params;
   Station.findById(id)
   .then (station => {
+    if(!station) return new Promise.reject({
+      status: 404,
+      message: "Station not found"
+    });
     station.hot = !station.hot;
     return station.save()
   })
   .then(station => res.status(200).json(station))
   .catch(err => res.status(500).json(err));
+};
+
+const uploadAvatar = (req, res, next) => {
+  const { id } = req.params;
+  let station
+  Station.findById(id)
+  .then (_station => {
+    if(!_station) return new Promise.reject({
+      status: 404,
+      message: "Station not found"
+    });
+    station = _station;
+    return uploadImageToCloudinary(req.file.path, 'station/avatar');
+  })
+  .then (async result => {
+    if (station.avatar && station.avatar != 'VexeOnlineMedia/imageDefault/no-image_ljozla') {
+      await removeImageFromCloudinary(station.avatar);
+    }
+    station.avatar = result.public_id
+    return station.save()
+  })
+  .then (station => res.status(200).json(station))
+  .catch (err => res.status(500).json(err));
 }
 
 module.exports = {
@@ -112,5 +156,6 @@ module.exports = {
   patchStationById,
   deleteStationsById,
   updateStationStatus,
-  updateStationHot
+  updateStationHot,
+  uploadAvatar
 }
