@@ -46,17 +46,17 @@ const putBlogById = (req,res,next) => {
 
 const deleteBlogById = (req,res,next) => {
     const {id} = req.params;
-    //let _blog;
+    let _blog;
     Blog.findById(id)
     .then(blog=>{
-       // _blog = blog;
+        _blog = blog;
         if(!blog) return Promise.reject({
             status: 404,
             message: "Blog not found"
         })
         return Blog.deleteOne({_id:id})
     })
-    .then(()=>res.status(200).json({message:"thành công"}))
+    .then(()=>res.status(200).json(_blog))
     .catch(err=>res.status(500).json(err))
 }
 

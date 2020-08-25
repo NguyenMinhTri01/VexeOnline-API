@@ -19,7 +19,7 @@ module.exports.validatePostBlog = async (req, res, next) => {
     errors.name = 'name blog must in clauses 3 and 255 characters !'
   } else{
     const blog = await Blog.findOne({name})
-    if(blog) errors.name = "name exists"
+    if(blog) errors.name = "Tên bài viết tồn tại"
   }
 
   // validate description

@@ -31,6 +31,7 @@ app.use("/api/tickets", require("./routes/api/controllers/tickets"));
 app.use("/api/blogs", require("./routes/api/controllers/blogs"));
 app.use("/api/contacts", require("./routes/api/controllers/contacts"));
 app.use("/api/pagestatics", require("./routes/api/controllers/pageStatics"));
+app.use("/api/garages", require("./routes/api/controllers/garages"));
   
 app.use('/uploads', express.static("./uploads"));
 const port = process.env.PORT || config.port 
