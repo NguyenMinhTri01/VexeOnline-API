@@ -10,4 +10,6 @@ pass : VexeOnline@2020
 
 
 
-hello
+// chỗ xoa ảnh vehicle chưa hoàng thành 
+* xóa hết
+* xóa 1 ảnh

@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 router.get('/', stationController.getStations);
-router.get('/:id', stationController.getStationsById);
+router.get('/:id', stationController.getStationById);
 router.get('/status/:id',authenticate, authorize(["admin"]), stationController.updateStationStatus);
 router.get('/hot/:id',authenticate, authorize(["admin"]), stationController.updateStationHot);
 router.post(
@@ -15,7 +15,7 @@ router.post(
   authenticate,
   authorize(["admin"]),
   validatePostStation,
-  stationController.postStations
+  stationController.postStation
 );
 router.put(
   '/:id',
@@ -34,14 +34,15 @@ router.delete(
   '/:id',
   authenticate,
   authorize(["admin"]),
-  stationController.deleteStationsById
+  stationController.deleteStationById
 );
 router.patch(
   "/upload-avatar/:id",
   authenticate,
   authorize(["admin"]),
   uploadSingleImage('avatar'),
-  stationController.uploadAvatar);
+  stationController.uploadAvatar
+);
 
 
 module.exports = router;
