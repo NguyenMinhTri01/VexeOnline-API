@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const {ImageSchema} = require('../models/Image');
 const VehicleSchema = new mongoose.Schema({
   name: { type : String, required : true},
   numberOfSeats : {type : Number , require : true},
   avatar : {type : String, default : "VexeOnlineMedia/imageDefault/no-image_ljozla"},
-  listImages : {type : Array, default : []},
+  listImages : [ImageSchema],
   utilities : {type : String , default : ''},
   status : {type: Boolean, default : true},
   createdAt : {type : Date, default : Date.now},
