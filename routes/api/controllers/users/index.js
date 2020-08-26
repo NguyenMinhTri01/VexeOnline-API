@@ -5,13 +5,32 @@ const { authenticate, authorize } = require("./../../../../middlewares/auth")
 
 const { uploadSingleImage } = require("./../../../../middlewares/uploadImages")
 
-const { validatePostUser } = require("./../../../../middlewares/validation/users/postUser")
+const { validatePostUser,validatePutUser } = require("./../../../../middlewares/validation/users")
 
 
 
 const router = express.Router()
-router.post("/", validatePostUser, userController.postUsers);
+router.get(
+  "/",
+  authenticate,
+  authorize(['admin']),
+  userController.getUsers
+);
+router.post("/register", validatePostUser, userController.postUsers);
 router.post("/login", userController.login);
+router.put(
+  "/:id",
+  authenticate,
+  authorize(['client']),
+  validatePutUser,
+  userController.putUserById
+)
+router.delete(
+  '/:id',
+  authenticate,
+  authorize(["admin"]),
+  userController.deleteUserById
+);
 router.patch("/upload-avatar",
   authenticate,
   uploadSingleImage('avatar'),

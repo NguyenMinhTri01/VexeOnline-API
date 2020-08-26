@@ -9,8 +9,8 @@ const { uploadImageToCloudinary, removeImageFromCloudinary } = require ('../../.
 // register users
 const jwtSign = promisify(jwt.sign);
 const postUsers = (req, res, next) => {
-  const {email, password, fullName,userType} = req.body;
-  let newUser = new User({email, password, fullName,userType});
+  const {email, password, fullName,phone,userType} = req.body;
+  let newUser = new User({email, password, fullName,phone,userType});
   newUser.save()
   .then(user => res.status(200).json({message: user}))
   .catch(err => res.json(err))
@@ -67,8 +67,62 @@ const uploadAvatar = (req, res, next) => {
     return res.json(err);
   })
 }
+
+const putUserById = (req,res,next) => {
+  const {id} = req.params;
+  User.findById(id)
+  .then(user=>{
+    if(!user) return new Promise.reject({
+      status: 404,
+      message: "User not found"
+    });
+    const keys = ['email','password','fullName','phone']
+    keys.forEach(key=>{
+      user[key] = req.body[key]
+    })
+    return user.save()
+  })
+  .then(user=>res.status(200).json(user))
+  .catch(err=>res.status(500).json(err))
+}
+
+const deleteUserById = (req,res,next) => {
+  const {id} = req.params;
+  User.findById(id)
+  .then(async user=>{
+    if(!user) return new Promise.reject({
+      status: 404,
+      message: "User not found"
+    });
+
+    if(user.avatar && user.avatar!='VexeOnlineMedia/imageDefault/no-image_ljozla'){
+      await removeImageFromCloudinary(user.avatar);
+    }
+    return user.deleteOne({_id:id})
+  })
+  .then(result => {
+    if (result.deletedCount == 0) return res.status(404).json({
+      status: 404,
+      message: "User not found"
+    })
+    return res.status(200).json(result);
+  })
+  .catch(err => res.status(500).json(err));
+}
+const getUsers = (req,res,next) => {
+  User.find()
+  .then(users=>{
+    res.status(200).json(users)
+  })
+  .catch(err=>{
+    res.status(500).json(err)
+  })
+}
 module.exports = {
   postUsers,
   login,
-  uploadAvatar
+  uploadAvatar,
+  getUsers,
+  putUserById,
+  deleteUserById
 }
