@@ -18,7 +18,7 @@ GarageSchema.pre('save', function beforeSave(next) {
   next();
 });
 
-const Garage = mongoose.model('Station', GarageSchema, "Station");
+const Garage = mongoose.model('Garage', GarageSchema, "Garage");
 module.exports = {
   GarageSchema,
   Garage

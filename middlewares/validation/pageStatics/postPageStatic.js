@@ -15,7 +15,7 @@ module.exports.validatePostPageStatic = async (req, res, next) => {
       errors.name = 'name page static must in clauses 3 and 255 characters !'
     } else{
       const pageStatic = await PageStatic.findOne({name})
-      if(pageStatic) errors.name = "name exists"
+      if(pageStatic) errors.name = "Tên trang tĩnh tồn tại"
     }
 
     // validate content 

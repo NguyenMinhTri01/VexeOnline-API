@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 
 
-module.exports.validatePutBlog = async (req, res, next) => {
+module.exports.validatePutBlog = (req, res, next) => {
   let errors = {}
   const name = _.get(req, 'body.name', '');
   const description = _.get(req, 'body.description', '');

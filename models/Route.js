@@ -14,12 +14,11 @@ const RouteSchema = new mongoose.Schema({
   },
   policy: { type: String, default: '' },
   status: { type: Boolean, default: true },
+  hot: { type: Boolean, default: false },
   time : {type : Number, required : true},
   titleSeo: { type: String, required: true },
   descriptionSeo: { type: String, required: true },
   keywordSeo: { type: String, required: true },
-  startTime: { type: Date, require: true },
-  endTime: { type: Date, require: true, },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date }
 });

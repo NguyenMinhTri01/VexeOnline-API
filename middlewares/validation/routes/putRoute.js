@@ -1,46 +1,54 @@
 const validator = require('validator');
 const _ = require('lodash');
-const {Blog} = require("../../../models/Blog")
 
 
 
-module.exports.validatePostBlog = async (req, res, next) => {
+module.exports.validatePutRoute = (req, res, next) => {
   let errors = {};
   const name = _.get(req, 'body.name', '');
-  const description = _.get(req, 'body.description', '');
-  const content = _.get(req, 'body.content', '');
+  const fromStationId = _.get(req, 'body.fromStationId', '');
+  const toStationId = _.get(req, 'body.toStationId', '');
+  const policy = _.get(req, 'body.policy', '');
+  const time = _.get(req, 'body.time', '');
   const titleSeo = _.get(req, 'body.titleSeo', '');
   const descriptionSeo = _.get(req, 'body.descriptionSeo', '');
   const keywordSeo = _.get(req, 'body.keywordSeo', '');
+
   // validate name 
   if (validator.isEmpty(name)) {
-    errors.name = 'name blog is require !';
+    errors.name = 'name is require !';
   } else if (!validator.isLength(name, { min: 3, max: 255 })) {
-    errors.name = 'name blog must in clauses 3 and 255 characters !'
-  } else{
-    const blog = await Blog.findOne({name})
-    if(blog) errors.name = "Tên bài viết tồn tại"
-  }
-
-  // validate description
-  if (validator.isEmpty(description)) {
-    errors.description = 'description blog is require !';
-  } else if (!validator.isLength(description, { min: 3, max: 500 })) {
-    errors.description = 'description blog must in clauses 3 and 500 characters !'
+    errors.name = 'name must in clauses 3 and 255 characters !'
   };
 
-  // validate content 
-  if (validator.isEmpty(content)) {
-    errors.content = 'content blog is require !';
-  } else if (!validator.isLength(content, { min: 3, max: 255 })) {
-    errors.content = 'content blog must in clauses 3 and 255 characters !'
+  // validate fromStationId
+  if (validator.isEmpty(fromStationId)) {
+    errors.fromStationId = 'fromStation is require !';
   };
+
+  // validate toStationId
+  if (validator.isEmpty(toStationId)) {
+    errors.toStationId = 'toStation is require !';
+  };
+
+  // validate policy 
+  if (validator.isEmpty(policy)) {
+    errors.policy = 'policy is require !';
+  } else if (!validator.isLength(policy, { min: 3, max: 255 })) {
+    errors.policy = 'policy must in clauses 3 and 255 characters !'
+  };
+
+
+  // validate time 
+  // if (validator.isEmpty(time)) {
+  //   errors.time = 'time is require !';
+  // };
 
   // validate titleSeo
   if (validator.isEmpty(titleSeo)) {
-    errors.titleSeo = 'titleSeo blog is require !';
+    errors.titleSeo = 'titleSeo is require !';
   } else if (!validator.isLength(titleSeo, { min: 3, max: 65 })) {
-    errors.titleSeo = 'titleSeo blog must in clauses 3 and 65 characters !'
+    errors.titleSeo = 'titleSeo must in clauses 3 and 65 characters !'
   } else if (validator.matches(titleSeo, /^(?=.*[!@#(){}+\$%\^&\*\'\"\/\\])/)) {
     errors.titleSeo = 'The titleSeo cannot contain "!@#(){}+\$%\^&\*\'\"\/\\"'
   };
@@ -48,9 +56,9 @@ module.exports.validatePostBlog = async (req, res, next) => {
 
   // validate descriptionSeo 
   if (validator.isEmpty(descriptionSeo)) {
-    errors.descriptionSeo = 'descriptionSeo blog is require !';
+    errors.descriptionSeo = 'descriptionSeo is require !';
   } else if (!validator.isLength(descriptionSeo, { min: 3, max: 255 })) {
-    errors.descriptionSeo = 'descriptionSeo blog must in clauses 3 and 255 characters !'
+    errors.descriptionSeo = 'descriptionSeo must in clauses 3 and 255 characters !'
   } else if (validator.matches(descriptionSeo, /^(?=.*[!@#(){}+\$%\^&\*\'\"\/\\])/)) {
     errors.descriptionSeo = 'The descriptionSeo cannot contain " !@#(){}+\$%\^&\*\'\"\/\\"'
   };
@@ -58,9 +66,9 @@ module.exports.validatePostBlog = async (req, res, next) => {
 
   // validate keywordSeo 
   if (validator.isEmpty(keywordSeo)) {
-    errors.keywordSeo = 'keywordSeo blog is require !';
+    errors.keywordSeo = 'keywordSeo is require !';
   } else if (!validator.isLength(keywordSeo, { min: 3, max: 255 })) {
-    errors.keywordSeo = 'keywordSeo blog must in clauses 3 and 255 characters !'
+    errors.keywordSeo = 'keywordSeo must in clauses 3 and 255 characters !'
   } else if (validator.matches(keywordSeo, /^(?=.*[!@#(){}+\$%\^&\*\'\"\/\\])/)) {
     errors.keywordSeo = 'The keywordSeo cannot contain !@#(){}+$%^&*\'\"/ '
   };

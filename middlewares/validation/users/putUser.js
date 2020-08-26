@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { User } = require('../../../models/User')
 
 
-const validatePostUser = async (req, res, next) => {
+const validatePutUser = async (req, res, next) => {
   let errors = {}
   const email = _.get(req, 'body.email', "");
   const password = _.get(req, 'body.password', "");
@@ -39,17 +39,16 @@ const validatePostUser = async (req, res, next) => {
   }
 
   // validator fullName
+
   if (validator.isEmpty(fullName)){
     errors.fullName = 'fullName is require !'
   } else if (!validator.isLength(fullName, { min : 3})) {
     errors.fullName = "fullName must have at least 3 characters"
   }
-
-  // validator phone
-  if (validator.isEmpty(phone)){
+// validator phone
+if (validator.isEmpty(phone)){
     errors.phone = 'phone is require !'
   }
-
   if (_.isEmpty(errors)) return next();
   res.status(400).json(errors);
   //email exists?
@@ -60,5 +59,5 @@ const validatePostUser = async (req, res, next) => {
 }
 
 module.exports = {
-  validatePostUser
+    validatePutUser
 }

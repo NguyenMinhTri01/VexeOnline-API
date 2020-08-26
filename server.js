@@ -42,8 +42,14 @@ app.use("/api/tickets", require("./routes/api/controllers/tickets"));
 app.use("/api/blogs", require("./routes/api/controllers/blogs"));
 app.use("/api/contacts", require("./routes/api/controllers/contacts"));
 app.use("/api/pagestatics", require("./routes/api/controllers/pageStatics"));
+<<<<<<< HEAD
 app.use("/api/vehicles", require("./routes/api/controllers/vehicles"));
 
+=======
+app.use("/api/garages", require("./routes/api/controllers/garages"));
+app.use("/api/routes", require("./routes/api/controllers/routes"));
+  
+>>>>>>> 45f2a15cd5a702aa4c0d32c5148c35f70692b06a
 app.use('/uploads', express.static("./uploads"));
 const port = process.env.PORT || config.port
 app.listen(port, () => {
