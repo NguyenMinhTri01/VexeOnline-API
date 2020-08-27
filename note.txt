@@ -11,3 +11,42 @@ pass : VexeOnline@2020
 email : vexeonline365
 pass : VexeOnline@2020
 
+
+
+***mô tả api của trip ***
++ get all trip 
+  chú ý
+  statusNumber có 4 trạng thái 
+  0 : Chưa được đặt
+  1 : Đã được đăt
+  2 : Đang chay
+  3 : Đã hoàn thành
+  admin chỉ dc update từ trạng thái 2 -> 3
+
+
+allowsEdit = true cho phep edit 
+allowsDelete = true cho phép xóa
+
+
+
++ post trip vd 
+  req
+{
+    "garageId" : "5f448aac2317dc2c40760027",
+    "routeId" : "5f4607b30eecf64ad88d069b",
+    "vehicleId" : "5f4724d2d911d216149fe15e",
+    "startTime" : "2020-09-26T17:00:00.000Z",
+    "price": 3500000,
+    "note: : "abc"
+}
+  res test postman
+
+
++ put trip chỉ khi allowsEdit = true (kiểm tại api get all trips)
+  req tương tự post
+
+
++ update statusNumber chỉ được update khi statusNumber = 2
+
+
++ delete chỉ delete trip khi allowsDelete = true (kiểm tại api lấy tất cả trip)
