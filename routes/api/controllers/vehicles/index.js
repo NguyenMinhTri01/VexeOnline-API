@@ -18,9 +18,9 @@ router.get(
 
 router.post(
   '/',
-  authenticate,
-  authorize(["admin"]),
-  validatePostVehicle,
+  // authenticate,
+  // authorize(["admin"]),
+  // validatePostVehicle,
   vehicleController.postVehicle,
   vehicleController.saveListImagesOfVehicle
 );

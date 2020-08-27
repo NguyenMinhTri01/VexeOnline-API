@@ -15,14 +15,14 @@ module.exports.sendBookTicketEmail = (ticket, trip, user) => {
     requireTLS: true,
     requireSSL : true,
     auth : {
-      user: 'vexerecybersoft@gmail.com',
-      pass: '@0387282390@'
+      user: 'vexeonline365@gmail.com',
+      pass: 'VexeOnline@2020'
     }
   }
   const transporter = nodemailer.createTransport(transport);
 
   const mailOptions = {
-    from : "vexerecybersoft@gmail.com",
+    from : "vexeonline365@gmail.com",
     to: "nguyenminhtri07011999@gmail.com",
     subject: "Mail xac nhan da mua ve thành công",
     html : compiledTemplate.render({

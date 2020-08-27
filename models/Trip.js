@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const {SeatSchema} = require('../models/Seat');
-const { date } = require('random-js');
 
 const TripSchema = new mongoose.Schema({
   garageId : {
@@ -18,9 +17,9 @@ const TripSchema = new mongoose.Schema({
   startTime : {type : Date, required : true},
   endTime : {type : Date, required : true},
   seats : [SeatSchema],
-  price : {type: Number, default: 0},
+  price : {type: Number, required: true},
   note : {type : String , default : ''},
-  status : {type : Boolean, default : true},
+  statusNumber : {type : Number, default : 0},
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date }
 });
@@ -30,3 +29,12 @@ module.exports = {
   Trip,
   TripSchema
 }
+
+// statusNumber = 0 Chưa được đặt
+// statusNumber = 1 Đã được đặt
+// statusNumber = 2 Đang chạy
+// statusNumber = 3 đã hoàn thành
+
+// trip only delete and edit when statusNumber = 0
+// trip only delete when statusNumber = 3
+// admin only update statusNumber to 2 from 3

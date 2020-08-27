@@ -7,9 +7,7 @@ mk:Vexeredb@
 +tài khoản truy cập cloudinary
 email:vexerecybersoft@gmail.com
 pass : VexeOnline@2020
++gmail gưi mail xác nhận
+email : vexeonline365
+pass : VexeOnline@2020
 
-
-
-// chỗ xoa ảnh vehicle chưa hoàng thành 
-* xóa hết
-* xóa 1 ảnh

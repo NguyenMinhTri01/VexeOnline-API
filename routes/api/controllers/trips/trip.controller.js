@@ -1,71 +1,104 @@
 const { Trip } = require('../../../../models/Trip');
 const { Seat } = require('../../../../models/Seat');
+const { Vehicle } = require('../../../../models/Vehicle');
+const { Route } = require('../../../../models/Route');
+const { Garage } = require("../../../../models/Garage")
 const _ = require('lodash');
-
-const seatCodes = [
-  "A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A010", "A011", "A012",
-  "B01", "B02", "B03", "B04", "B05", "B06", "B07", "B08", "B09", "B010", "B011", "B012",
-  "C01", "C02", "C03", "C04", "C05", "C06", "C07", "C08", "C09", "C010", "C011", "C012",
-]
+const seatCodes = require('../../../../data/seatCodes.json');
 
 const getTrips = (req, res, next) => {
   Trip.find()
+    .populate({
+      path: "garageId",
+      select: 'name -_id'
+    })
+    .populate({
+      path: "routeId",
+      select: 'name -_id'
+    })
+    .populate({
+      path: "vehicleId",
+      select: 'name -_id'
+    })
     .then(trips => {
       const _trips = trips.map(trip => {
-        // const modifiedTrip =  {
-        //   ...trip._doc,
-        //   availableSeatNumber: trip.seats.filter(seats => !seats.isBookmarked).length
-        // };
-        // delete modifiedTrip['seats'];
-        // return modifiedTrip;
-
-
-        // return {
-        //   ..._.omit(trip._doc, ['seats']),
-        //   availableSeatNumber: trip.seats.filter(seats => !seats.isBookmarked).length
-        // }
-        // return _.assign(
-        //   _.omit(trip._doc, ['seats']),
-        //   { availableSeatNumber: trip.seats.filter(seats => !seats.isBookmarked).length }
-        // )
-
-       return _.chain(trip)
-       .get('_doc')
-       .omit(['seats'])
-       .assign({ availableSeatNumber: trip.seats.filter(seats => !seats.isBooked).length })
-       .value()
+        return _.chain(trip)
+          .get('_doc')
+          .omit(['seats', 'garageId', 'routeId', 'vehicleId'])
+          .assign({ availableSeatNumber: trip.seats.filter(seats => !seats.isBooked).length })
+          .assign({
+            garageName: trip.garageId.name,
+            routeName: trip.routeId.name,
+            vehicleName: trip.vehicleId.name,
+            allowsEdit: (trip.statusNumber === 0),
+            allowsDelete: (trip.statusNumber === 0 || trip.statusNumber === 3)
+          })
+          .value()
       })
       res.status(200).json(_trips);
     })
     .catch(err => res.status(500).json(err))
 };
-
-const postTrips = (req, res, next) => {
-  const { fromStationId, toStationId, startTime, price } = req.body;
-  const seats = seatCodes.map(code => {
-    return new Seat({ code })
-  })
-  const newTrip = new Trip({
-    fromStationId, toStationId, startTime, price, seats
-  })
-
-  newTrip.save()
-    .then(trip => res.status(200).json(trip))
-    .catch(err => res.status(500).json(err));
+const postTrip = (req, res, next) => {
+  let seats = [];
+  let startTime = new Date(req.body.startTime);
+  let trip = null
+  Garage.findById(req.body.garageId) 
+  .then(garage => {
+    if (!garage) return res.status(404).json({
+      message: 'garage is fonud'
+    }) 
+  });
+  Route.findById(req.body.routeId)
+  .then(route => {
+    if (!route) return res.status(404).json({
+      message: 'route is fonud'
+    }) 
+  });
+  Vehicle.findById(req.body.vehicleId)
+    .then(vehicle => {
+      if (!vehicle) return new Promise.reject({
+        status: 404,
+        message: "vehicle not found"
+      })
+      for (let i = 0; i < vehicle.numberOfSeats; i++) {
+        seats.push(new Seat({ code: seatCodes[i] }))
+      }
+      trip = {
+        ...req.body,
+        seats
+      }
+      return Route.findById(req.body.routeId)
+    })
+    .then(route => {
+      if (!route) return new Promise.reject({
+        status: 404,
+        message: "route not found"
+      })
+      const time = route.time
+      const endTime = new Date(startTime.getTime() + (time * 60 * 60 * 1000))
+      trip = {
+        ...trip,
+        endTime
+      }
+      const newTrip = new Trip(trip)
+      return newTrip.save()
+    })
+    .then(_trip => {
+      res.status(200).json(_trip)
+    })
+    .catch(err => res.status(err.status).json(err.message))
 };
 
 const getTripById = (req, res, next) => {
-  // hiển thi số lượng ghế trống
-  
   Trip.findById(req.params.id)
-    // .select("-seats")
     .then(trip => {
       if (!trip) return res.status(404).json({
         message: 'trip not found'
       })
       const modifiedTrip = {
         ..._.omit(trip._doc, ['seats']),
-        availableSeatNumber: trip.seats.filter(seat => !seat.isBooked).length
+        availableSeatNumber: trip.seats.filter(seat => !seat.isBooked).length,
       }
       return Promise.resolve(modifiedTrip)
     })
@@ -74,27 +107,91 @@ const getTripById = (req, res, next) => {
     })
     .catch(err => {
       console.log(err)
-      res.status(500).json("loi o day")});
+      res.status(500).json(err)
+    });
 };
 
-const patchTripById = (req, res, next) => {
-  Trip.updateOne({ _id: req.params.id}, req.body)
-  .then(trip => res.status(200).json(trip))
-  .catch(err => res.status(500).json(err))
+const putTrip = (req, res, next) => {
+  const { id } = req.params
+    Trip.findById(id)
+    .then(async trip=> {
+      if(!trip) return res.status(404).json({
+        message: 'trip not found'
+      })
+      if (trip.statusNumber != 0) return res.status(404).json({
+        message: 'trip is not edit'
+      })
+      if(trip.garageId != req.body.garageId) {
+        const garage = await Garage.findById(req.body.garageId) 
+        if (!garage) return res.status(404).json({
+          message: 'garage is fonud'
+        }) 
+      }
+      if (trip.vehicleId != req.body.vehicleId) {
+        const vehicle = await Vehicle.findById(req.body.vehicleId)
+        if(!vehicle) return res.status(404).json({
+          message: 'vehicle is fonud'
+        }) 
+        trip.vehicleId = req.body.vehicleId
+        let seats = []
+        for (let i = 0; i < vehicle.numberOfSeats; i++) {
+          seats.push(new Seat({ code: seatCodes[i] }))
+        }
+        trip.seats = seats
+      };
+      if (trip.startTime != req.body.startTime || trip.routeId != req.body.routeId ){
+        const route = await Route.findById(req.body.routeId)
+        if(!route) return res.status(404).json({
+          message: 'route is fonud'
+        }) 
+        trip.routeId = req.body.routeId
+        let startTime = new Date(req.body.startTime)
+        let endTime = new Date(startTime.getTime() + (route.time * 60 * 60 * 1000))
+        trip.startTime = startTime;
+        trip.endTime = endTime;
+      };
+      trip.price = req.body.price;
+      trip.note = req.body.note;
+      return trip.save()
+    })
+    .then(trip => res.status(200).json(_.omit(trip, ['seats']))) 
 };
 
 const deleteTripById = (req, res, next) => {
-  Trip.deleteOne({ _id: req.params.id}, req.body)
-  .then(trip => res.status(200).json(trip))
-  .catch(err => res.status(500).json(err))
+  const {id} = req.params
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    Trip.findById(id)
+    .then(trip => {
+      if (!trip) return res.status(404).json({message : "trip not found"})
+      if(trip.statusNumber === 1 || trip.statusNumber === 2) return res.status(404).json({message : "trip can not delete"})
+      return Trip.deleteOne({ _id: id })
+    })
+    .then(result => res.status(200).json(result))
+    .catch(err => res.status(500).json(err))
+  } else return res.status(404).json({message : "trip id invalid"})
+};
+
+const updateTripStatusNumber = (req, res, next) => {
+  const {id} = req.params
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    Trip.findById(id)
+    .then(trip => {
+      if (!trip) return res.status(404).json({message : "trip not found"})
+      if (trip.statusNumber != 2) return res.status(404).json({message : "trip can not update status"})
+      trip.statusNumber = 3
+      return trip.save()
+    })
+    .then(trip => res.status(200).json(trip))
+  } else return res.status(404).json({message : "trip id invalid"})
 }
 
 
 
 module.exports = {
   getTrips,
-  postTrips,
+  postTrip,
   getTripById,
-  patchTripById, 
-  deleteTripById
+  deleteTripById,
+  putTrip,
+  updateTripStatusNumber
 }

@@ -3,3 +3,4 @@ yarn.lock
 *.zip
 .DS_Store
 package-lock.json
+/test
