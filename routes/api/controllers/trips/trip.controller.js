@@ -22,16 +22,23 @@ const getTrips = (req, res, next) => {
     })
     .then(trips => {
       const _trips = trips.map(trip => {
+        const timeNow = Date.now()
+        const startTime = new Date(trip.startTime)
+        if(timeNow > startTime.getTime()) {
+          trip.statusNumber = 2
+          trip.save();
+        }
         return _.chain(trip)
           .get('_doc')
           .omit(['seats', 'garageId', 'routeId', 'vehicleId'])
-          .assign({ availableSeatNumber: trip.seats.filter(seats => !seats.isBooked).length })
           .assign({
+            availableSeatNumber: trip.seats.filter(seats => !seats.isBooked).length,
             garageName: trip.garageId.name,
             routeName: trip.routeId.name,
             vehicleName: trip.vehicleId.name,
             allowsEdit: (trip.statusNumber === 0),
-            allowsDelete: (trip.statusNumber === 0 || trip.statusNumber === 3)
+            allowsDelete: (trip.statusNumber === 0 || trip.statusNumber === 3),
+            allowsUpdateStatusNumber : trip.statusNumber === 2
           })
           .value()
       })
@@ -46,20 +53,20 @@ const postTrip = (req, res, next) => {
   Garage.findById(req.body.garageId) 
   .then(garage => {
     if (!garage) return res.status(404).json({
-      message: 'garage is fonud'
+      message: 'garage is not found'
     }) 
   });
   Route.findById(req.body.routeId)
   .then(route => {
     if (!route) return res.status(404).json({
-      message: 'route is fonud'
+      message: 'route is not found'
     }) 
   });
   Vehicle.findById(req.body.vehicleId)
     .then(vehicle => {
       if (!vehicle) return new Promise.reject({
         status: 404,
-        message: "vehicle not found"
+        message: "vehicle is not found"
       })
       for (let i = 0; i < vehicle.numberOfSeats; i++) {
         seats.push(new Seat({ code: seatCodes[i] }))
@@ -154,7 +161,7 @@ const putTrip = (req, res, next) => {
       trip.note = req.body.note;
       return trip.save()
     })
-    .then(trip => res.status(200).json(_.omit(trip, ['seats']))) 
+    .then(trip => res.status(200).json(_.omit(trip._doc, ['seats']))) 
 };
 
 const deleteTripById = (req, res, next) => {
@@ -177,7 +184,7 @@ const updateTripStatusNumber = (req, res, next) => {
     Trip.findById(id)
     .then(trip => {
       if (!trip) return res.status(404).json({message : "trip not found"})
-      if (trip.statusNumber != 2) return res.status(404).json({message : "trip can not update status"})
+      if (trip.statusNumber != 2) return res.status(404).json({message : "trip can not update status number"})
       trip.statusNumber = 3
       return trip.save()
     })
