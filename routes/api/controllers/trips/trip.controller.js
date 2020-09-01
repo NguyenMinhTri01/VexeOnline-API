@@ -24,7 +24,7 @@ const getTrips = (req, res, next) => {
       const _trips = trips.map(trip => {
         const timeNow = Date.now()
         const startTime = new Date(trip.startTime)
-        if(timeNow > startTime.getTime()) {
+        if(timeNow > startTime.getTime() && trip.statusNumber == 1) {
           trip.statusNumber = 2
           trip.save();
         }
@@ -36,15 +36,17 @@ const getTrips = (req, res, next) => {
             garageName: trip.garageId.name,
             routeName: trip.routeId.name,
             vehicleName: trip.vehicleId.name,
-            allowsEdit: (trip.statusNumber === 0),
-            allowsDelete: (trip.statusNumber === 0 || trip.statusNumber === 3),
-            allowsUpdateStatusNumber : trip.statusNumber === 2
+            denyEdit: (trip.statusNumber != 0), // 1 2 3 => true
+            denyDelete: (trip.statusNumber === 1 || trip.statusNumber === 2), // 1 2 => true
           })
           .value()
       })
       res.status(200).json(_trips);
     })
-    .catch(err => res.status(500).json(err))
+    .catch(err => {
+      console.log(err)
+      res.status(500).json(err)
+    })
 };
 const postTrip = (req, res, next) => {
   let seats = [];
@@ -180,15 +182,46 @@ const deleteTripById = (req, res, next) => {
 
 const updateTripStatusNumber = (req, res, next) => {
   const {id} = req.params
+  let garageName = "";
+  let routeName = "";
+  let vehicleName = "";
   if (id.match(/^[0-9a-fA-F]{24}$/)) {
     Trip.findById(id)
+    .populate({
+      path: "garageId",
+      select: 'name -_id'
+    })
+    .populate({
+      path: "routeId",
+      select: 'name -_id'
+    })
+    .populate({
+      path: "vehicleId",
+      select: 'name -_id'
+    })
     .then(trip => {
+      garageName = trip.garageId.name
+      routeName = trip.routeId.name
+      vehicleName = trip.vehicleId.name
       if (!trip) return res.status(404).json({message : "trip not found"})
       if (trip.statusNumber != 2) return res.status(404).json({message : "trip can not update status number"})
       trip.statusNumber = 3
       return trip.save()
     })
-    .then(trip => res.status(200).json(trip))
+    .then(trip => {
+      const _trip = _.chain(trip)
+          .get('_doc')
+          .omit(['seats', 'garageId', 'routeId', 'vehicleId'])
+          .assign({
+            availableSeatNumber: trip.seats.filter(seats => !seats.isBooked).length,
+            garageName,
+            routeName,
+            vehicleName,
+            denyEdit: (trip.statusNumber != 0), // 1 2 3 => true
+            denyDelete: (trip.statusNumber === 1 || trip.statusNumber === 2), // 1 2 => true
+          })
+          .value()
+      res.status(200).json(_trip)})
   } else return res.status(404).json({message : "trip id invalid"})
 }
 
