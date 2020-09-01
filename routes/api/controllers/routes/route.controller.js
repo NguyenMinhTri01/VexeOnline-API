@@ -12,11 +12,17 @@ const getRoutes = (req,res,next) => {
         select: 'name -_id'
     })
     .then(routes=>{
-        // routes.forEach(route=>{
-        //     route.tesstttttt = route.fromStationId.name
-        //    // route.toStationId = route.toStationId.name;
-        // })
-        res.status(200).json(routes)
+        const _routes = routes.map(route=>{
+            return _.chain(route)
+            .get('_doc')
+            .omit(['fromStationId','toStationId'])
+            .assign({
+                fromStation: route.fromStationId.name,
+                toStation: route.toStationId.name,
+            })
+            .value()
+        })
+        res.status(200).json(_routes)
     }).catch(err=>{
         res.status(500).json(err)
     })

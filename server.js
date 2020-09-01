@@ -34,7 +34,7 @@ app.use("/api/vehicles", require("./routes/api/controllers/vehicles"));
 app.use("/api/garages", require("./routes/api/controllers/garages"));
 app.use("/api/routes", require("./routes/api/controllers/routes"));
 
-app.use('/uploads', express.static("./uploads"));
+app.use('/uploads', express.static("./uploads")); 
 const port = process.env.PORT || config.port
 app.listen(port, () => {
   console.log(`app is running is port ${port}`);

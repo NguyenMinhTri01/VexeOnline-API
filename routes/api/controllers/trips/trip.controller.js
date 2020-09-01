@@ -173,7 +173,7 @@ const deleteTripById = (req, res, next) => {
 
 const updateTripStatusNumber = (req, res, next) => {
   const {id} = req.params
-  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+ // if (id.match(/^[0-9a-fA-F]{24}$/)) {
     Trip.findById(id)
     .then(trip => {
       if (!trip) return res.status(404).json({message : "trip not found"})
@@ -182,7 +182,7 @@ const updateTripStatusNumber = (req, res, next) => {
       return trip.save()
     })
     .then(trip => res.status(200).json(trip))
-  } else return res.status(404).json({message : "trip id invalid"})
+ // } else return res.status(404).json({message : "trip id invalid"})
 }
 
 

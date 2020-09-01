@@ -12,7 +12,7 @@ router.get("/:id", tripController.getTripById);
 router.post("/",
   authenticate,
   authorize(["admin"]),
-  validatePostTrip, 
+  validatePostTrip,
   tripController.postTrip
 );
 
