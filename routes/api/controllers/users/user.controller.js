@@ -109,10 +109,17 @@ const deleteUserById = (req,res,next) => {
   })
   .catch(err => res.status(500).json(err));
 }
-const getUsers = (req,res,next) => {
+const getUsers = (req, res, next) => {
   User.find()
   .then(users=>{
-    res.status(200).json(users)
+    const _users = users.map(user => {
+      return _.chain(user)
+        .get("_doc")
+        .assign({
+          denyEdit : true
+        })
+    })
+    res.status(200).json(_users)
   })
   .catch(err=>{
     res.status(500).json(err)

@@ -1,8 +1,17 @@
 const {Contact} = require("../../../../models/Contact");
+const _  = require('lodash');
 const getContact = (req,res,next) =>{
     Contact.find()
-    .then(contacts=>{
-        res.status(200).json(contacts)
+    .then(contacts => {
+        const _contacts = contacts.map(contact => {
+            return _.chain(contact)
+                .get('_doc')
+                .assign({
+                    denyEdit : true
+                })
+                .value()
+        })
+        res.status(200).json(_contacts)
     }).catch(err=>{
         res.status(500).json(err)
     })
