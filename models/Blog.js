@@ -4,6 +4,7 @@ const urlSlug = require('url-slug');
 const BlogSchema = new mongoose.Schema({
   name: { type : String, required : true},
   slug : {type : String},
+  avatar : {type : String, default : "VexeOnlineMedia/imageDefault/no-image_ljozla"},
   hot : {type: Boolean, default : false},
   status : {type: Boolean, default : true},
   description : {type : String, required : true},
