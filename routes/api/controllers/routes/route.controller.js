@@ -29,7 +29,17 @@ const getRoutes = (req, res, next) => {
             res.status(500).json(err)
         })
 }
-
+const getRouteHot = (req,res,next) => {
+    Route.find({hot:true,status:true})
+    .limit(5)
+    .sort({createdAt:1})
+    .then(routes=>{
+        res.status(200).json(routes)
+    })
+    .catch(err => {
+        res.status(500).json(err)
+    })
+}
 const postRoutes = (req, res, next) => {
     const newRoute = new Route(req.body);
     newRoute.save()
@@ -154,5 +164,5 @@ const getHotById = (req, res, next) => {
 
 }
 module.exports = {
-    getRoutes, postRoutes, putRouteById, getHotById, getStatusById, deleteRouteById, getRouteById
+    getRoutes, postRoutes, putRouteById, getHotById, getStatusById, deleteRouteById, getRouteById,getRouteHot
 }

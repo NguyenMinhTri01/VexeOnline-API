@@ -1,4 +1,5 @@
 const {Blog} = require("../../../../models/Blog");
+const { uploadImageToCloudinary, removeImageFromCloudinary } = require ('../../../../middlewares/uploadImageToCloudinary');
 const getBlog = (req, res, next) => {
     Blog.find()
         .then(blogs => {
@@ -8,7 +9,17 @@ const getBlog = (req, res, next) => {
             res.status(500).json(err)
         })
 }
-
+const getBlogHot = (req,res,next) => {
+    Blog.find({hot:true,status:true})
+    .limit(3)
+    .sort({createdAt:1})
+    .then(blogs=>{
+        res.status(200).json(blogs)
+    })
+    .catch(err => {
+        res.status(500).json(err)
+    })
+}
 const postBlog = (req,res,next) =>{
     const {name,description,content,titleSeo,descriptionSeo,keywordSeo} = req.body;
     const newBlog = new Blog({name,description,content,titleSeo,descriptionSeo,keywordSeo})
@@ -24,6 +35,14 @@ const getBlogById = (req,res,next) => {
     Blog.findById(id)
     .then(blog=>res.status(200).json(blog))
     .catch(err=>res.status(500).json(err))
+}
+const getBlogBySlug = (req,res,next) => {
+    const slug = req.params.slug;
+    Blog.findOne({"slug" : slug})
+    .then(blog=>res.status(200).json(blog))
+    .catch(err=>{
+        console.log(err)
+    })
 }
 
 const putBlogById = (req,res,next) => {
@@ -91,6 +110,29 @@ const getHotById = (req,res,next) => {
     .then(blog=>res.status(200).json(blog))
     .catch(err=>res.status(500).json(err))
 }
+
+const uploadAvatar = (req, res, next) => {
+    const { id } = req.params;
+    let blog
+    Blog.findById(id)
+    .then (_blog => {
+      if(!_blog) return new Promise.reject({
+        status: 404,
+        message: "Blog not found"
+      });
+      blog = _blog;
+      return uploadImageToCloudinary(req.file.path, 'blog/avatar');
+    })
+    .then (async result => {
+      if (blog.avatar && blog.avatar != 'VexeOnlineMedia/imageDefault/no-image_ljozla') {
+        await removeImageFromCloudinary(blog.avatar);
+      }
+      blog.avatar = result.public_id
+      return blog.save()
+    })
+    .then (blog => res.status(200).json(blog))
+    .catch (err => res.status(500).json(err));
+  }
 module.exports = {
-    postBlog,getBlog,getBlogById,putBlogById,deleteBlogById,getStatusById,getHotById
+    postBlog,getBlog,getBlogById,putBlogById,deleteBlogById,getStatusById,getHotById,uploadAvatar,getBlogBySlug,getBlogHot
 }

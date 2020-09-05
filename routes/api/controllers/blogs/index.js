@@ -3,10 +3,12 @@ const router = express.Router();
 const blogController = require("./blog.controller")
 const { authenticate, authorize } = require("./../../../../middlewares/auth");
 const { validatePostBlog, validatePutBlog } = require("../../../../middlewares/validation/blogs");
-//const {vadidatePostBlog} = require("../../../../middlewares/validation/blogs/postBlog")
+const { uploadSingleImage } = require("./../../../../middlewares/uploadImages")
 
 router.get("/",blogController.getBlog);
+router.get("/hotBlog",blogController.getBlogHot);
 router.get("/:id",blogController.getBlogById);
+router.get("/detail/:slug",blogController.getBlogBySlug);
 router.get(
     "/status/:id",
     authenticate,
@@ -40,6 +42,12 @@ router.delete(
     authorize(["admin"]),
     blogController.deleteBlogById
 );
-
+router.patch(
+    "/upload-avatar/:id",
+    authenticate,
+    authorize(["admin"]),
+    uploadSingleImage('avatar'),
+    blogController.uploadAvatar
+);
 
 module.exports = router;
