@@ -28,14 +28,12 @@ module.exports.validatePutBlog = (req, res, next) => {
   // validate content 
   if (validator.isEmpty(content)) {
     errors.content = 'content blog is require !';
-  } else if (!validator.isLength(content, { min: 3, max: 255 })) {
-    errors.content = 'content blog must in clauses 3 and 255 characters !'
-  };
+  }
 
   // validate titleSeo
   if (validator.isEmpty(titleSeo)) {
     errors.titleSeo = 'titleSeo blog is require !';
-  } else if (!validator.isLength(titleSeo, { min: 3, max: 65 })) {
+  } else if (!validator.isLength(titleSeo, { min: 3, max: 255 })) {
     errors.titleSeo = 'titleSeo blog must in clauses 3 and 65 characters !'
   } else if (validator.matches(titleSeo, /^(?=.*[!@#(){}+\$%\^&\*\'\"\/\\])/)) {
     errors.titleSeo = 'The titleSeo cannot contain "!@#(){}+\$%\^&\*\'\"\/\\"'

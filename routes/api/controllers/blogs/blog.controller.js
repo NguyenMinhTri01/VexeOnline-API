@@ -9,7 +9,17 @@ const getBlog = (req, res, next) => {
             res.status(500).json(err)
         })
 }
-
+const getBlogHot = (req,res,next) => {
+    Blog.find({hot:true,status:true})
+    .limit(3)
+    .sort({createdAt:1})
+    .then(blogs=>{
+        res.status(200).json(blogs)
+    })
+    .catch(err => {
+        res.status(500).json(err)
+    })
+}
 const postBlog = (req,res,next) =>{
     const {name,description,content,titleSeo,descriptionSeo,keywordSeo} = req.body;
     const newBlog = new Blog({name,description,content,titleSeo,descriptionSeo,keywordSeo})
@@ -124,5 +134,5 @@ const uploadAvatar = (req, res, next) => {
     .catch (err => res.status(500).json(err));
   }
 module.exports = {
-    postBlog,getBlog,getBlogById,putBlogById,deleteBlogById,getStatusById,getHotById,uploadAvatar,getBlogBySlug
+    postBlog,getBlog,getBlogById,putBlogById,deleteBlogById,getStatusById,getHotById,uploadAvatar,getBlogBySlug,getBlogHot
 }
