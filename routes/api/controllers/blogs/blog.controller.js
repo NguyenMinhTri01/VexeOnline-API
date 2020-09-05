@@ -1,7 +1,22 @@
 const {Blog} = require("../../../../models/Blog");
 const { uploadImageToCloudinary, removeImageFromCloudinary } = require ('../../../../middlewares/uploadImageToCloudinary');
 const getBlog = (req, res, next) => {
+    const page = parseInt(req.query.page);
+    const PAGE_SIZE = 3;
     Blog.find()
+        .skip((page-1)*PAGE_SIZE)
+        .limit(PAGE_SIZE)
+        .sort({createdAt:1})
+        .then(blogs => {
+            res.status(200).json(blogs)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+}
+const getCountBlog = (req, res, next) => {
+    Blog.find()
+        .countDocuments()
         .then(blogs => {
             res.status(200).json(blogs)
         })
@@ -134,5 +149,5 @@ const uploadAvatar = (req, res, next) => {
     .catch (err => res.status(500).json(err));
   }
 module.exports = {
-    postBlog,getBlog,getBlogById,putBlogById,deleteBlogById,getStatusById,getHotById,uploadAvatar,getBlogBySlug,getBlogHot
+    postBlog,getBlog,getBlogById,putBlogById,deleteBlogById,getStatusById,getHotById,uploadAvatar,getBlogBySlug,getBlogHot,getCountBlog
 }

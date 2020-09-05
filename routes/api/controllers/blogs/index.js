@@ -7,6 +7,7 @@ const { uploadSingleImage } = require("./../../../../middlewares/uploadImages")
 
 router.get("/",blogController.getBlog);
 router.get("/hotBlog",blogController.getBlogHot);
+router.get("/countBlog",blogController.getCountBlog);
 router.get("/:id",blogController.getBlogById);
 router.get("/detail/:slug",blogController.getBlogBySlug);
 router.get(
