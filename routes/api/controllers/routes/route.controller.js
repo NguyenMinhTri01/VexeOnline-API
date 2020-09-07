@@ -1,8 +1,38 @@
 const { Route } = require('../../../../models/Route');
 const _ = require('lodash');
-const { route } = require('../trips');
-const router = require('../vehicles');
+// const { route } = require('../trips');
+// const router = require('../vehicles');
 
+// const getRoutes = (req, res, next) => {
+//     // Route.find()
+//     // .then(routes=>{
+//     //     res.status(200).json(routes)
+//     // })
+//     Route.find()
+//     .populate({
+//         path: "fromStationId",
+//         select: 'name -_id'
+//     })
+//     .populate({
+//         path: "toStationId",
+//         select: 'name -_id'
+//     })
+//     .then(routes => {
+//         const _routes = routes.map(route => {
+//             return _.chain(route)
+//                     .get('_doc')
+//                     .omit(['fromStationId', 'toStationId'])
+//                     .assign({
+//                         fromStationName: route.fromStationId.name,
+//                         toStationName: route.toStationId.name
+//                     })
+//                     .value()
+//         })
+//         res.status(200).json(_routes)
+//     }).catch(err => {
+//         res.status(500).json(err)
+//     })
+// }
 const getRoutes = (req, res, next) => {
     Route.find()
         .populate({
@@ -23,7 +53,7 @@ const getRoutes = (req, res, next) => {
                         toStationName: route.toStationId.name
                     })
                     .value()
-            })
+                })
             res.status(200).json(_routes)
         }).catch(err => {
             res.status(500).json(err)

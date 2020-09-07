@@ -12,7 +12,7 @@ const postUsers = (req, res, next) => {
   const {email, password, fullName,phone,userType} = req.body;
   let newUser = new User({email, password, fullName,phone,userType});
   newUser.save()
-  .then(user => res.status(200).json({message: user}))
+  .then(user => res.status(200).json(user))
   .catch(err => res.json(err))
 
 
@@ -110,7 +110,7 @@ const deleteUserById = (req,res,next) => {
   .catch(err => res.status(500).json(err));
 }
 const getUsers = (req, res, next) => {
-  User.find()
+  User.find({userType:'client'})
   .then(users=>{
     const _users = users.map(user => {
       return _.chain(user)
