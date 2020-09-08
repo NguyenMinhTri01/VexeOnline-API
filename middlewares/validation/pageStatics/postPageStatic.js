@@ -21,9 +21,7 @@ module.exports.validatePostPageStatic = async (req, res, next) => {
     // validate content 
     if (validator.isEmpty(content)) {
       errors.content = 'content page static is require !';
-    } else if (!validator.isLength(content, { min: 3, max: 255 })) {
-      errors.content = 'content page static must in clauses 3 and 255 characters !'
-    };
+    }
 
   
     if (_.isEmpty(errors)) return next();

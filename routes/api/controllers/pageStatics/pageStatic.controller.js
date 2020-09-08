@@ -27,7 +27,14 @@ const getPageStaticById = (req,res,next) => {
     .then(pageStatic=>res.status(200).json(pageStatic))
     .catch(err=>res.status(500).json(err))
 }
-
+const getPageStaticBySlug = (req,res,next) => {
+    const slug = req.params.slug;
+    PageStatic.findOne({"slug" : slug})
+    .then(pageStatic=>res.status(200).json(pageStatic))
+    .catch(err=>{
+        console.log(err)
+    })
+}
 const putPageStaticById = (req,res,next) => {
     const {id} = req.params;
     PageStatic.findById(id)
@@ -63,5 +70,5 @@ const deletePageStaticById = (req,res,next) => {
 }
 
 module.exports={
-    getPageStatic,postPageStatic,getPageStaticById,putPageStaticById,deletePageStaticById
+    getPageStatic,postPageStatic,getPageStaticById,putPageStaticById,deletePageStaticById,getPageStaticBySlug
 }

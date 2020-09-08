@@ -6,6 +6,7 @@ const { validatePostPageStatic, validatePutPageStatic } = require("../../../../m
 
 router.get("/",pageStaticController.getPageStatic);
 router.get("/:id",pageStaticController.getPageStaticById);
+router.get("/detail/:slug",pageStaticController.getPageStaticBySlug);
 router.post(
     "/",
     authenticate,
