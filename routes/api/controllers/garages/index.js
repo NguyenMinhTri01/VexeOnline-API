@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.get('/', garageController.getGarages);
 router.get('/:id', garageController.getGaragesById);
+router.get("/detail/:slug",garageController.getGaragesBySlug);
 router.get('/status/:id',authenticate, authorize(["admin"]), garageController.updateGarageStatus);
 router.post(
   '/',  

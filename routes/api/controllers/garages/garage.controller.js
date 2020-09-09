@@ -27,7 +27,14 @@ const getGarages = (req, res, next) => {
       .then(garage => res.status(200).json(garage))
       .catch(err => res.status(500).json(err));
   };
-
+  const getGaragesBySlug = (req,res,next) => {
+    const slug = req.params.slug;
+    Garage.findOne({"slug" : slug})
+    .then(garage=>res.status(200).json(garage))
+    .catch(err=>{
+        console.log(err)
+    })
+}
   const putGarageById = (req, res, next) => {
     const { id } = req.params;
     Garage.findById(id)
@@ -108,5 +115,5 @@ const getGarages = (req, res, next) => {
     .catch (err => res.status(500).json(err));
   }
   module.exports={
-      getGarages,postGarages,getGaragesById,putGarageById,deleteGaragesById,updateGarageStatus,uploadAvatar
+      getGarages,postGarages,getGaragesById,putGarageById,deleteGaragesById,updateGarageStatus,uploadAvatar,getGaragesBySlug
   }
