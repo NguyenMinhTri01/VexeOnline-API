@@ -5,7 +5,7 @@ const { authenticate, authorize } = require("./../../../../middlewares/auth");
 const { validatePostRoute, validatePutRoute } = require("../../../../middlewares/validation/routes");
 
 router.get("/",routeController.getRoutes);
-router.get("/hotRoute",routeController.getRouteHot);
+router.get("/hotRoutes",routeController.getRoutesHot);
 router.get("/:id",routeController.getRouteById);
 router.get(
     "/status/:id",

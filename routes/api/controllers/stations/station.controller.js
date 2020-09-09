@@ -145,6 +145,12 @@ const uploadAvatar = (req, res, next) => {
     })
     .then(station => res.status(200).json(station))
     .catch(err => res.status(500).json(err));
+};
+
+const getStationsHot = (req, res, next) => {
+  Station.find({hot : true, status : true})
+  .then (stations => res.status(200).json(stations))
+  .catch(err => res.status(500).json(err))
 }
 
 module.exports = {
@@ -156,5 +162,6 @@ module.exports = {
   deleteStationById,
   updateStationStatus,
   updateStationHot,
-  uploadAvatar
+  uploadAvatar,
+  getStationsHot
 }

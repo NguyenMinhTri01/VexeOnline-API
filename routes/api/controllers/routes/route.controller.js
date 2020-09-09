@@ -59,7 +59,7 @@ const getRoutes = (req, res, next) => {
             res.status(500).json(err)
         })
 }
-const getRouteHot = (req,res,next) => {
+const getRoutesHot = (req,res,next) => {
     Route.find({hot:true,status:true})
     .limit(5)
     .sort({createdAt:1})
@@ -194,5 +194,5 @@ const getHotById = (req, res, next) => {
 
 }
 module.exports = {
-    getRoutes, postRoutes, putRouteById, getHotById, getStatusById, deleteRouteById, getRouteById,getRouteHot
+    getRoutes, postRoutes, putRouteById, getHotById, getStatusById, deleteRouteById, getRouteById,getRoutesHot
 }
