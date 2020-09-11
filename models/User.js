@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   password: {type: String, required:true},
   fullName: {type: String, required: true},
   phone: {type: String, required: true},
-  userType: {type: String, default: 'client'},
+  userType: {type: String, default: 'client', enum : ['client', 'admin']},
   avatar : {type: String, default: "VexeOnlineMedia/imageDefault/no-image_ljozla"},
   createdAt : {type : Date, default : Date.now},
   updatedAt : Date

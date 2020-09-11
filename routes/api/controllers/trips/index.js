@@ -16,23 +16,29 @@ router.post("/",
   tripController.postTrip
 );
 
+router.post("/search-trips",
+  tripController.searchTrips
+);
+
 router.put("/:id",
   authenticate,
   authorize(["admin"]),
-  validatePutTrip, 
+  validatePutTrip,
   tripController.putTrip
 );
 
 router.get(
   "/status-number/:id",
-  authenticate, 
-  authorize(["admin"]), 
-  tripController.updateTripStatusNumber);
+  authenticate,
+  authorize(["admin"]),
+  tripController.updateTripStatusNumber
+);
 
 router.delete(
   "/:id",
-  authenticate, 
-  authorize(["admin"]),  
-  tripController.deleteTripById);
+  authenticate,
+  authorize(["admin"]),
+  tripController.deleteTripById
+);
 
 module.exports = router
