@@ -28,7 +28,7 @@ const login = (req, res, next) => {
   })
   .then(isMatched => {
     if (!isMatched) return Promise.reject({status: 400, message: "Wrong password"});
-    const payload = _.pick(_user, ['email', '_id', 'fullName', 'userType']);
+    const payload = _.pick(_user, ['email', '_id', 'fullName', 'userType',"avatar","phone"]);
     return jwtSign (
       payload,
       'TriMinh',
@@ -125,11 +125,38 @@ const getUsers = (req, res, next) => {
     res.status(500).json(err)
   })
 }
+const getUsersAdmin = (req, res, next) => {
+  User.find({userType:'admin'})
+  .then(user=>{
+    res.status(200).json(user)
+  })
+  .catch(err=>{
+    res.status(500).json(err)
+  })
+}
+const putUserAdmin = (req,res,next) => {
+  User.find({userType:'admin'})
+  .then(user=>{
+    if(!user) return new Promise.reject({
+      status: 404,
+      message: "User not found"
+    });
+    const keys = ['email','fullName','phone']
+    keys.forEach(key=>{
+      user[key] = req.body[key]
+    })
+    return user.save()
+  })
+  .then(user=>res.status(200).json(user))
+  .catch(err=>res.status(500).json(err))
+}
 module.exports = {
   postUsers,
   login,
   uploadAvatar,
   getUsers,
   putUserById,
-  deleteUserById
+  deleteUserById,
+  getUsersAdmin,
+  putUserAdmin
 }

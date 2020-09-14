@@ -16,6 +16,7 @@ router.get(
   authorize(['admin']),
   userController.getUsers
 );
+router.get("/getAdmin",authenticate,userController.getUsersAdmin);
 router.post("/register", validatePostUser, userController.postUsers);
 router.post("/login", userController.login);
 router.put(
@@ -25,6 +26,7 @@ router.put(
   validatePutUser,
   userController.putUserById
 )
+router.put("/putAdmin",userController.putUserAdmin);
 router.delete(
   '/:id',
   authenticate,
