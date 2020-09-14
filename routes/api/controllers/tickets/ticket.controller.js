@@ -3,10 +3,10 @@ const _ = require("lodash")
 const { Trip } = require("../../../../models/Trip")
 const { Seat } = require("../../../../models/Seat")
 const { sendBookTicketEmail } = require("../../../../services/email/bookTicket");
+const createTicketCode = require('../../../../middlewares/generateTicketCode').createTicketCode
 
 const createTicket = (req, res, next) => {
   const { customerName, email, phone, note, tripId, seatCodes } = req.body
-  console.log(seatCodes)
   let newTicket = { customerName, email, phone, note, tripId }
   if (req.user != 'guest' && req.user._id) {
     newTicket = { ...newTicket, userId: req.user._id }
@@ -27,11 +27,14 @@ const createTicket = (req, res, next) => {
           message: `${errSeatCodes.join(", ")} is/are not available`
         })
       };
+      (trip.statusNumber == 0) ? trip.statusNumber = 1 : null;
       newTicket = new Ticket({
         ...newTicket,
         seats: seatCodes.map(code => new Seat({ code })),
-        totalPrice: trip.price * seatCodes.length
+        totalPrice: (trip.price * seatCodes.length ),
+        code : createTicketCode()
       })
+      
       seatCodes.forEach(code => {
         const seatIndex = trip.seats.findIndex(seat => seat.code === code)
         trip.seats[seatIndex].isBooked = true
@@ -42,16 +45,16 @@ const createTicket = (req, res, next) => {
       ])
     })
     .then(([ticket, trip]) => {
+      // send mail
       res.status(200).json(ticket)
     })
     .catch(err => {
       if (err.status) {
         return res.status(err.status).json({ message: err.message })
       }
-      return res.status(500).json(err);
+      console.log(err)
+      return res.status(500).json({err : "server error"});
     })
-
-
 };
 
 const getTickets = (req, res, next) => {
@@ -63,9 +66,35 @@ const getTickets = (req, res, next) => {
 
 const getTicketById = (req, res, next) => {
 
+};
+
+const getTicketByCode = (req, res, next) => {
+  const {code} = req.params
+  Ticket.findOne({code})
+  .then(ticket => {
+    ticket ? res.status(200).json(ticket) : res.status(200).json(null)
+  })
+};
+
+const getBookingHistory = (req, res, next) => {
+  if (req.user != 'guest' && req.user._id) {
+    const userId = req.user._id;
+    Ticket.find({userId})
+    .then(tickets => {
+      res.status(200).json(tickets)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  } else {
+    res.status(404).json({message : "does not exist booking history"})
+  }
 }
+
 module.exports = {
   createTicket,
   getTickets,
-  getTicketById
+  getTicketById,
+  getTicketByCode,
+  getBookingHistory
 }

@@ -5,7 +5,8 @@ const config = require('./config')
 const mongoUri = process.env.MONGO_URI || config.mongoUri
 mongoose.connect(mongoUri, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  useCreateIndex : true
 })
   .then(() => {
     console.log("connect mongodb ok");
