@@ -101,12 +101,28 @@ const postTrip = (req, res, next) => {
 
 const getTripById = (req, res, next) => {
   Trip.findById(req.params.id)
+  .populate({
+    path: "garageId",
+    select: 'name avatar'
+  })
+  .populate({
+    path: "routeId",
+    populate: {
+      path: "fromStationId toStationId",
+      select: "name province -_id"
+    },
+    select: '-createdAt -updatedAt -hot -status'
+  })
+  .populate({
+    path: "vehicleId",
+    select: '-createdAt -updatedAt -status'
+  })
     .then(trip => {
       if (!trip) return res.status(404).json({
         message: 'trip not found'
       })
       const modifiedTrip = {
-        ..._.omit(trip._doc, ['seats']),
+        ..._.omit(trip._doc),
         availableSeatNumber: trip.seats.filter(seat => !seat.isBooked).length,
       }
       return Promise.resolve(modifiedTrip)
@@ -263,11 +279,7 @@ const searchTrips = (req, res, next) => {
           .populate({
             path: "routeId",
             populate: {
-              path: "fromStationId",
-              select: "name province -_id"
-            },
-            populate: {
-              path: "toStationId",
+              path: "fromStationId toStationId",
               select: "name province -_id"
             },
             select: '-createdAt -updatedAt -hot -status'
