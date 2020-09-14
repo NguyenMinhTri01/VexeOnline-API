@@ -2,20 +2,18 @@ const { Ticket } = require("../../../../models/Ticket");
 const _ = require("lodash")
 const { Trip } = require("../../../../models/Trip")
 const { Seat } = require("../../../../models/Seat")
-const {sendBookTicketEmail} = require ("../../../../services/email/bookTicket");
+const { sendBookTicketEmail } = require("../../../../services/email/bookTicket");
+
 const createTicket = (req, res, next) => {
-  const { tripId, seatCodes } = req.body;
-  const { _id: userId } = req.user; // = const _userId = req.user._id
+  const { customerName, email, phone, note, tripId, seatCodes } = req.body
+  console.log(seatCodes)
+  let newTicket = { customerName, email, phone, note, tripId }
+  if (req.user != 'guest' && req.user._id) {
+    newTicket = { ...newTicket, userId: req.user._id }
+  }
   Trip.findById(tripId)
-    .populate("fromStationId")
-    .populate("toStationId")
     .then(trip => {
-      if (!trip) {
-        return Promise.reject({
-          status: 404,
-          message: "trip not found"
-        })
-      }
+      if (!trip) return res.status(404).json({ message: 'trip not found' })
       const availableSeatCodes = trip.seats
         .filter(seat => !seat.isBooked)
         .map(seat => seat.code)
@@ -28,12 +26,12 @@ const createTicket = (req, res, next) => {
           status: 400,
           message: `${errSeatCodes.join(", ")} is/are not available`
         })
-      }
-      const newTicket = new Ticket({
-        userId, tripId,
+      };
+      newTicket = new Ticket({
+        ...newTicket,
         seats: seatCodes.map(code => new Seat({ code })),
         totalPrice: trip.price * seatCodes.length
-      });
+      })
       seatCodes.forEach(code => {
         const seatIndex = trip.seats.findIndex(seat => seat.code === code)
         trip.seats[seatIndex].isBooked = true
@@ -44,7 +42,6 @@ const createTicket = (req, res, next) => {
       ])
     })
     .then(([ticket, trip]) => {
-      sendBookTicketEmail(ticket, trip, req.user)
       res.status(200).json(ticket)
     })
     .catch(err => {
@@ -53,13 +50,15 @@ const createTicket = (req, res, next) => {
       }
       return res.status(500).json(err);
     })
+
+
 };
 
 const getTickets = (req, res, next) => {
-   Ticket.find()
-   .then(tickets => {
-     res.status(200).json(tickets)
-   })
+  Ticket.find()
+    .then(tickets => {
+      res.status(200).json(tickets)
+    })
 }
 
 const getTicketById = (req, res, next) => {

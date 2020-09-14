@@ -16,7 +16,7 @@ module.exports.authenticate = (req, res, next) => {
         next();
     })
     .catch(err => res.status(401).json({ message: "token invalid" }))
-}
+};
 module.exports.authorize = (userTypeArray) => {
   return (req, res, next) => {
     const { user } = req;
@@ -26,4 +26,18 @@ module.exports.authorize = (userTypeArray) => {
     }
     next();
   }
+};
+
+module.exports.authenticateForUser = (req, res, next) => {
+  const token = req.header("token");
+  if (!token) {
+    req.user = 'guest';
+    return next();
+  }
+  jwtVerify(token, 'TriMinh')
+    .then(decoded => {
+      req.user = decoded,
+        next();
+    })
+    .catch(err => res.status(401).json({ message: "token invalid" }))
 }

@@ -8,8 +8,12 @@ const TicketSchema = new mongoose.Schema({
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
   },
+  email : {type : String, required : true},
+  customerName: {type : String, required : true},
+  phone : {type : String, required : true},
+  note : String,
   seats: [SeatSchema],
   totalPrice: Number,
   createdAt : {type : Date, default : Date.now},
