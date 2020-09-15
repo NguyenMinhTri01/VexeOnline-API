@@ -153,6 +153,15 @@ const getStationsHot = (req, res, next) => {
   .catch(err => res.status(500).json(err))
 }
 
+const getStationBySlug = (req, res, next) => {
+  const {slug} = req.params;
+  Station.findOne({slug})
+  .then(station => {
+    if (!station) return res.status(200).json(null)
+    return res.status(200).json(station)
+  })
+}
+
 module.exports = {
   getStations,
   postStation,
@@ -163,5 +172,6 @@ module.exports = {
   updateStationStatus,
   updateStationHot,
   uploadAvatar,
-  getStationsHot
+  getStationsHot,
+  getStationBySlug
 }

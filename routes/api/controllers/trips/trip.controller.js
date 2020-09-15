@@ -5,6 +5,7 @@ const { Route } = require('../../../../models/Route');
 const { Garage } = require("../../../../models/Garage")
 const _ = require('lodash');
 const seatCodes = require('../../../../data/seatCodes.json');
+const router = require('../tickets');
 
 const getTrips = (req, res, next) => {
   Trip.find()
@@ -101,22 +102,22 @@ const postTrip = (req, res, next) => {
 
 const getTripById = (req, res, next) => {
   Trip.findById(req.params.id)
-  .populate({
-    path: "garageId",
-    select: 'name avatar'
-  })
-  .populate({
-    path: "routeId",
-    populate: {
-      path: "fromStationId toStationId",
-      select: "name province -_id"
-    },
-    select: '-createdAt -updatedAt -hot -status'
-  })
-  .populate({
-    path: "vehicleId",
-    select: '-createdAt -updatedAt -status'
-  })
+    .populate({
+      path: "garageId",
+      select: 'name avatar'
+    })
+    .populate({
+      path: "routeId",
+      populate: {
+        path: "fromStationId toStationId",
+        select: "name province -_id"
+      },
+      select: '-createdAt -updatedAt -hot -status'
+    })
+    .populate({
+      path: "vehicleId",
+      select: '-createdAt -updatedAt -status'
+    })
     .then(trip => {
       if (!trip) return res.status(404).json({
         message: 'trip not found'
@@ -301,6 +302,49 @@ const searchTrips = (req, res, next) => {
       res.status(200).json(trips)
     })
 
+};
+
+const getTripByFromStation = (req, res, next) => {
+  const { slug } = req.params;
+  const timeNow = new Date(Date.now())
+  Route.find()
+    .populate({
+      path: "fromStationId",
+      select: 'slug -_id'
+    })
+    .select('name fromStationId')
+    .then(routes => {
+      if (routes.length > 0) {
+        let arrRouteIdNeed = routes.filter(item => (
+          item.fromStationId.slug === slug));
+        arrRouteIdNeed = arrRouteIdNeed.map(item => item._id);
+        return Trip.find({
+          $and: [
+            { routeId: { $in: arrRouteIdNeed } },
+            { statusNumber: { $lt: 2 } },
+            { startTime: { $gt: timeNow, $lt: new Date(timeNow.getFullYear(), timeNow.getMonth(), timeNow.getDate() + 1) } }
+          ]
+        })
+          .populate({
+            path: "garageId",
+            select: 'name'
+          })
+          .populate({
+            path: "routeId",
+            select: '-createdAt -updatedAt -hot -status'
+          })
+      }
+    })
+    .then(trips => {
+      trips = trips.map(trip => {
+        return _.chain(trip)
+          .get('_doc')
+          .omit(['seats'])
+          .assign({ availableSeatNumber: trip.seats.filter(seats => !seats.isBooked).length })
+          .value()
+      })
+      res.status(200).json(trips)
+    })
 }
 
 
@@ -312,5 +356,6 @@ module.exports = {
   deleteTripById,
   putTrip,
   updateTripStatusNumber,
-  searchTrips
+  searchTrips,
+  getTripByFromStation
 }

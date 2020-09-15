@@ -9,6 +9,7 @@ const router = express.Router();
 router.get('/', stationController.getStations);
 router.get("/hotStations",stationController.getStationsHot);
 router.get('/:id', stationController.getStationById);
+router.get('/detail/:slug', stationController.getStationBySlug);
 router.get('/status/:id',authenticate, authorize(["admin"]), stationController.updateStationStatus);
 router.get('/hot/:id',authenticate, authorize(["admin"]), stationController.updateStationHot);
 router.post(

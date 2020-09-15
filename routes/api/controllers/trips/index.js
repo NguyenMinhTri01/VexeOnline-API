@@ -8,7 +8,7 @@ const router = express.Router()
 router.get("/", tripController.getTrips);
 
 router.get("/:id", tripController.getTripById);
-
+router.get("/from-station/:slug", tripController.getTripByFromStation);
 router.post("/",
   authenticate,
   authorize(["admin"]),
