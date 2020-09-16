@@ -11,7 +11,8 @@ router.post(
   "/",
   authenticateForUser,
   ticketController.createTicket);
-router.get("/code/:code", ticketController.getTicketByCode);
+router.get("/code/:code/phone/:phone", ticketController.getTicketByCode);
+router.get("/cancel/:id", ticketController.cancelTicket)
 router.get(
   "/history",
   authenticateForUser,
