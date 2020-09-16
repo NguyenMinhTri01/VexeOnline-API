@@ -65,7 +65,7 @@ const getTickets = (req, res, next) => {
 }
 
 const getTicketById = (req, res, next) => {
-
+///dasdsadas
 };
 
 const getTicketByCode = (req, res, next) => {
