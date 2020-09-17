@@ -111,15 +111,25 @@ const cancelTicket = (req, res, next) => {
       },
       select: "name price"
     },
-    select: 'garageId routeId vehicleId price startTime endTime'
+    //select: 'garageId routeId vehicleId price startTime endTime'
   })
-  .then(ticket => {
+  .then(async ticket => {
     if (!ticket) return res.status(200).json({ err: true })
     result = {...ticket}
     ticket.statusTicket = 2;
-    return ticket.save()
+    let trip = await Trip.findById(ticket.tripId);
+    const listCanceledSeats = ticket.seats.map(seat => seat.code);
+    trip.seats.forEach((seat, index) => {
+      if (listCanceledSeats.indexOf(seat.code) != -1) {
+        trip.seats[index].isBooked = false
+      }
+    })
+    return Promise.all([
+      ticket.save(),
+      trip.save()
+    ])
   })
-  .then(ticket => {
+  .then(([ticket, trip])=> {
     if (ticket) {
       result = _.chain(result)
       .get('_doc')
