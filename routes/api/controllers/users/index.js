@@ -19,6 +19,7 @@ router.get(
 router.get("/getAdmin",authenticate,userController.getUsersAdmin);
 router.post("/register", validatePostUser, userController.postUsers);
 router.post("/login", userController.login);
+router.post("/login-facebook", userController.loginFacebook)
 router.put(
   "/:id",
   authenticate,
