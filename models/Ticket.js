@@ -17,6 +17,7 @@ const TicketSchema = new mongoose.Schema({
   note : String,
   seats: [SeatSchema],
   totalPrice: Number,
+  statusTicket : {type: Number, default: 0},
   createdAt : {type : Date, default : Date.now},
   updatedAt : Date
 })

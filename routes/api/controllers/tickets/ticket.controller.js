@@ -59,11 +59,50 @@ const createTicket = (req, res, next) => {
 
 const getTickets = (req, res, next) => {
   Ticket.find()
+  .populate({
+    path: "tripId",
+    select: 'garageId routeId vehicleId price -_id',
+    populate:{
+      path: 'garageId routeId vehicleId',
+      select: 'name'
+    },
+  })
     .then(tickets => {
+      // tickets = tickets.map(ticket=>{
+      //   return _.chain(ticket)
+      //   .get('_doc')
+      //   .omit(['tripId'])
+      //   .assign({
+      //     garageName: ticket.tripId.garageId.name,
+      //     routeName: ticket.tripId.routeId.name,
+      //     vehicleName: ticket.tripId.vehicleId.name,
+      //   })
+      //   .value()
+      // })
       res.status(200).json(tickets)
     })
 }
+const getstatusTicketById = (req,res,next) => {
+  const {id} = req.params;
+  Ticket.findById(id)
+  .then(ticket=>{
+      if(!ticket) return Promise.reject({
+          status: 404,
+          message: "Ticket not found"
+      })
+      if(ticket["statusTicket"]===0){
+        ticket["statusTicket"] = 1
+      }else if(ticket["statusTicket"]===1){
+        ticket["statusTicket"] = 2
+      }
+      
+      return ticket.save();
+  })
+  .then(ticket=>res.status(200).json(ticket))
+  .catch(err=>res.status(500).json(err))
 
+
+}
 const getTicketById = (req, res, next) => {
 
 };
@@ -91,10 +130,25 @@ const getBookingHistory = (req, res, next) => {
   }
 }
 
+const deleteTicketById = (req, res, next) => {
+  const { id } = req.params
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    Ticket.findById(id)
+      .then(ticket => {
+        if (!ticket) return res.status(404).json({ message: "ticket not found" })
+        return Ticket.deleteOne({ _id: id })
+      })
+      .then(result => res.status(200).json(result))
+      .catch(err => res.status(500).json(err))
+  } else return res.status(404).json({ message: "ticket id invalid" })
+};
+
 module.exports = {
   createTicket,
   getTickets,
   getTicketById,
   getTicketByCode,
-  getBookingHistory
+  getBookingHistory,
+  getstatusTicketById,
+  deleteTicketById
 }
