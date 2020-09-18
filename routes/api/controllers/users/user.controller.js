@@ -184,7 +184,43 @@ const loginFacebook = (req, res, next) => {
         return res.status(200).json({ message: "Success", token })
       }
     })
-}
+};
+
+const loginGoogle = (req, res, next) => {
+  const { email, fullName, googleId, accessToken } = req.body
+  User.findOne({ email })
+    .then(user => {
+      if (user) {
+        user.fullName = fullName
+        user.facebook.id = googleId
+        user.accessToken = accessToken
+        return user.save()
+      } else {
+        const newUser = new User({
+          email,
+          fullName,
+          google: {
+            id: googleId,
+            accessToken: accessToken
+          },
+          password : Math.floor((Math.random() * 1000000000))
+        })
+        return newUser.save()
+      }
+    })
+    .then(async user => {
+      if (user) {
+        const payload = _.pick(user, ['email', '_id', 'fullName', 'userType', "avatar", "phone"]);
+        const token = await jwtSign(
+          payload,
+          'TriMinh',
+          { expiresIn: 3600 }
+        )
+        return res.status(200).json({ message: "Success", token })
+      }
+    })
+};
+
 module.exports = {
   postUsers,
   login,
@@ -194,5 +230,6 @@ module.exports = {
   deleteUserById,
   getUsersAdmin,
   putUserAdmin,
-  loginFacebook
+  loginFacebook,
+  loginGoogle
 }
