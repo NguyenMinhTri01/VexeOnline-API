@@ -17,13 +17,19 @@ router.post(
   "/",
   authenticateForUser,
   ticketController.createTicket);
+  
 router.get("/code/:code/phone/:phone", ticketController.getTicketByCode);
+
 router.get("/cancel/:id", ticketController.cancelTicket)
+
 router.get(
   "/history",
-  authenticateForUser,
+  authenticate,
+  authorize(["client"]),
   ticketController.getBookingHistory);
-// router.get("/:id", ticketController.getTicketById);
+
+router.get("/:id", ticketController.getTicketById);
+
 // router.patch("/:id", tripController.patchTripById);
 // router.delete("/:id", tripController.deleteTripById);
 

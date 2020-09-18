@@ -59,6 +59,7 @@ const createTicket = (req, res, next) => {
 
 const getTickets = (req, res, next) => {
   Ticket.find()
+  .sort({createdAt:-1})
   .populate({
     path: "tripId",
     select: 'garageId routeId vehicleId price -_id',
@@ -104,7 +105,34 @@ const getstatusTicketById = (req,res,next) => {
 
 }
 const getTicketById = (req, res, next) => {
-  ///dasdsadas
+  const {id} = req.params
+  Ticket.findById(id)
+  .sort({createdAt:-1})
+  .populate({
+    path: "tripId",
+    select: 'garageId routeId vehicleId price startTime endTime -_id',
+    populate:{
+      path: 'garageId routeId vehicleId',
+      select: 'name',
+      populate: {
+        path: 'fromStationId toStationId',
+        select: "name "
+      },
+    },
+  })
+  .then(ticket => {
+    if (!ticket) return res.status(200).json({ err: true })
+    const modifiedTicket = _.chain(ticket)
+      .get('_doc')
+      .omit(['seats'])
+      .assign({
+        numberOfSeat : ticket.seats.length,
+        listSeat : ticket.seats.map(seat => seat.code).toString()
+      })
+      .value()
+    return res.status(200).json(modifiedTicket)
+  })
+  .catch(err=>err.status(500).json(err))
 };
 
 const getTicketByCode = (req, res, next) => {
@@ -185,18 +213,27 @@ const cancelTicket = (req, res, next) => {
 }
 
 const getBookingHistory = (req, res, next) => {
-  if (req.user != 'guest' && req.user._id) {
+ // if (req.user.userType === 'client' && req.user._id) {
     const userId = req.user._id;
     Ticket.find({ userId })
+    .sort({createdAt:-1})
+    .populate({
+      path: "tripId",
+      select: 'garageId routeId vehicleId price -_id',
+      populate:{
+        path: 'garageId routeId vehicleId',
+        select: 'name'
+      },
+    })
       .then(tickets => {
         res.status(200).json(tickets)
       })
       .catch(err => {
         console.log(err)
       })
-  } else {
-    res.status(404).json({ message: "does not exist booking history" })
-  }
+  // } else {
+  //   res.status(404).json({ message: "does not exist booking history" })
+  // }
 }
 
 const deleteTicketById = (req, res, next) => {
