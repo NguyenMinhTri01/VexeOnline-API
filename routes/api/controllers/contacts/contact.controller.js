@@ -17,6 +17,15 @@ const getContact = (req,res,next) =>{
     })
 }
 
+const getCountContact = (req,res,next) =>{
+    Contact.find()
+    .countDocuments()
+    .then(contacts => {
+        res.status(200).json(contacts)
+    }).catch(err=>{
+        res.status(500).json(err)
+    })
+}
 const postContact = (req,res,next)=>{
     const {name,email,phone,content} = req.body;
     const newContact = new Contact({name,email,phone,content});
@@ -46,5 +55,5 @@ const deleteContactById = (req,res,next) => {
 }
 
 module.exports = {
-    getContact,postContact,deleteContactById
+    getContact,postContact,deleteContactById,getCountContact
 }

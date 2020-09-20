@@ -49,6 +49,17 @@ const getTrips = (req, res, next) => {
       res.status(500).json(err)
     })
 };
+
+const getCountTrips = (req, res, next) => {
+  Trip.find()
+  .countDocuments()
+    .then(trips => {
+      res.status(200).json(trips);
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+};
 const postTrip = (req, res, next) => {
   let seats = [];
   let startTime = new Date(req.body.startTime);
@@ -357,5 +368,6 @@ module.exports = {
   putTrip,
   updateTripStatusNumber,
   searchTrips,
-  getTripByFromStation
+  getTripByFromStation,
+  getCountTrips
 }

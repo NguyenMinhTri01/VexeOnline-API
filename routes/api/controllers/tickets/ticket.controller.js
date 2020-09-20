@@ -83,6 +83,32 @@ const getTickets = (req, res, next) => {
       res.status(200).json(tickets)
     })
 }
+const getLatestTickets = (req, res, next) => {
+  Ticket.find()
+  .limit(10)
+  .sort({createdAt:-1})
+  .populate({
+    path: "tripId",
+    select: 'garageId routeId vehicleId price -_id',
+    populate:{
+      path: 'garageId routeId vehicleId',
+      select: 'name'
+    },
+  })
+    .then(tickets => {
+      res.status(200).json(tickets)
+    })
+}
+const getCountTickets = (req, res, next) => {
+  Ticket.find()
+  .countDocuments()
+    .then(tickets => {
+        res.status(200).json(tickets)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
 const getstatusTicketById = (req,res,next) => {
   const {id} = req.params;
   Ticket.findById(id)
@@ -257,5 +283,7 @@ module.exports = {
   getBookingHistory,
   getstatusTicketById,
   deleteTicketById,
-  cancelTicket
+  cancelTicket,
+  getCountTickets,
+  getLatestTickets
 }

@@ -16,6 +16,12 @@ router.get(
   authorize(['admin']),
   userController.getUsers
 );
+router.get(
+  "/count",
+  authenticate,
+  authorize(['admin']),
+  userController.getCountUsers
+);
 router.get("/getAdmin",authenticate,userController.getUsersAdmin);
 router.post("/register", validatePostUser, userController.postUsers);
 router.post("/login", userController.login);

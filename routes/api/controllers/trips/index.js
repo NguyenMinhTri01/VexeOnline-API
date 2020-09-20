@@ -6,7 +6,12 @@ const { route } = require('../vehicles');
 const router = express.Router()
 
 router.get("/", tripController.getTrips);
-
+router.get(
+  "/count",
+  authenticate,
+  authorize(['admin']),
+  tripController.getCountTrips
+);
 router.get("/:id", tripController.getTripById);
 router.get("/from-station/:slug", tripController.getTripByFromStation);
 router.post("/",

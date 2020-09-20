@@ -125,6 +125,16 @@ const getUsers = (req, res, next) => {
       res.status(500).json(err)
     })
 }
+const getCountUsers = (req, res, next) => {
+  User.find({ userType: 'client' })
+  .countDocuments()
+    .then(users => {
+      res.status(200).json(users)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+}
 const getUsersAdmin = (req, res, next) => {
   User.find({ userType: 'admin' })
     .then(user => {
@@ -231,5 +241,6 @@ module.exports = {
   getUsersAdmin,
   putUserAdmin,
   loginFacebook,
-  loginGoogle
+  loginGoogle,
+  getCountUsers
 }

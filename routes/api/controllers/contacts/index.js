@@ -10,6 +10,12 @@ router.get(
     authorize(["admin"]),
     contactController.getContact
 );
+router.get(
+    "/count",
+    authenticate,
+    authorize(["admin"]),
+    contactController.getCountContact
+);
 router.post("/",contactController.postContact);
 router.delete(
     "/:id",
