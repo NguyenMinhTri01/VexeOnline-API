@@ -44,8 +44,8 @@ const createTicket = (req, res, next) => {
         trip.save()
       ])
     })
-    .then(([ticket, trip]) => {
-      // send mail
+    .then( async ([ticket, trip]) => {
+      await sendBookTicketEmail(ticket._id, req.user)
       res.status(200).json(ticket)
     })
     .catch(err => {
