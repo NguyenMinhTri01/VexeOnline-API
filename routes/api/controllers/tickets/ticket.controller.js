@@ -287,10 +287,19 @@ const getBookingHistory = (req, res, next) => {
       },
     })
       .then(tickets => {
-        res.status(200).json(tickets)
+        if (tickets.length===0){
+          return Promise.reject({
+            status: 400,
+            message: "Không tìm thấy vé nào"
+          });
+        } else{
+          res.status(200).json(tickets)
+        }
+        
       })
       .catch(err => {
-        console.log(err)
+        if (err.status === 400) return res.status(err.status).json({ message: err.message })
+        return res.json(err);
       })
   // } else {
   //   res.status(404).json({ message: "does not exist booking history" })
