@@ -112,7 +112,7 @@ const getCountTickets = (req, res, next) => {
 const getstatusTicketById = (req,res,next) => {
   const {id} = req.params;
   Ticket.findById(id)
-  .then(ticket=>{
+  .then(async ticket=>{
       if(!ticket) return Promise.reject({
           status: 404,
           message: "Ticket not found"
@@ -120,15 +120,23 @@ const getstatusTicketById = (req,res,next) => {
       if(ticket["statusTicket"]===0){
         ticket["statusTicket"] = 1
       }else if(ticket["statusTicket"]===1){
-        ticket["statusTicket"] = 2
+        
+        let trip = await Trip.findById(ticket.tripId);
+        if (trip.statusNumber < 2) {
+          ticket["statusTicket"] = 2
+          const listCanceledSeats = ticket.seats.map(seat => seat.code);
+          trip.seats.forEach((seat, index) => {
+            if (listCanceledSeats.indexOf(seat.code) != -1) {
+              trip.seats[index].isBooked = false
+            }
+          })
+          await trip.save();
+        }
       }
-      
       return ticket.save();
   })
   .then(ticket=>res.status(200).json(ticket))
   .catch(err=>res.status(500).json(err))
-
-
 }
 const getTicketById = (req, res, next) => {
   const {id} = req.params
