@@ -197,7 +197,34 @@ const getTicketByCode = (req, res, next) => {
       return res.status(200).json(modifiedTicket)
     })
 };
-
+const searchByCode = (req, res, next) => {
+  const { code } = req.params
+  Ticket.findOne({ code })
+    .populate({
+      path: 'tripId',
+      populate: {
+        path: 'garageId routeId vehicleId',
+        populate: {
+          path: 'fromStationId toStationId',
+          select: "name "
+        },
+        select: "name price"
+      },
+      select: 'garageId routeId vehicleId price startTime endTime'
+    })
+    .then(ticket => {
+      if (!ticket) return res.status(200).json({ err: true })
+      const modifiedTicket = _.chain(ticket)
+        .get('_doc')
+        .omit(['seats'])
+        .assign({
+          numberOfSeat : ticket.seats.length,
+          listSeat : ticket.seats.map(seat => seat.code).toString()
+        })
+        .value()
+      return res.status(200).json([modifiedTicket])
+    })
+};
 const cancelTicket = (req, res, next) => {
   const {id} = req.params
   let result = null
@@ -293,5 +320,6 @@ module.exports = {
   deleteTicketById,
   cancelTicket,
   getCountTickets,
-  getLatestTickets
+  getLatestTickets,
+  searchByCode
 }
