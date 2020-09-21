@@ -9,6 +9,7 @@ const router = express.Router()
 router.get("/", authenticate, authorize(["admin"]), ticketController.getTickets);
 router.get("/count", authenticate, authorize(["admin"]), ticketController.getCountTickets);
 router.get("/latest", authenticate, authorize(["admin"]), ticketController.getLatestTickets);
+router.get("/searchCode", authenticate, authorize(["admin"]), ticketController.searchByCode);
 router.get(
   "/statusTicket/:id",
   authenticate,
