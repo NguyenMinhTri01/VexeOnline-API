@@ -6,6 +6,7 @@ const { validatePostBlog, validatePutBlog } = require("../../../../middlewares/v
 const { uploadSingleImage } = require("./../../../../middlewares/uploadImages")
 
 router.get("/",blogController.getBlog);
+router.get("/pagination",blogController.getPaginationBlog);
 router.get("/hotBlog",blogController.getBlogHot);
 router.get("/countBlog",blogController.getCountBlog);
 router.get("/:id",blogController.getBlogById);
