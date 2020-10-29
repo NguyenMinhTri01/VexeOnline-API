@@ -5,6 +5,8 @@ const { authenticate, authorize } = require("./../../../../middlewares/auth");
 const { validatePostPageStatic, validatePutPageStatic } = require("../../../../middlewares/validation/pageStatics");
 
 router.get("/",pageStaticController.getPageStatic);
+router.get('/pagination', pageStaticController.getPaginationPageStatic);
+router.get('/count', pageStaticController.getCountPageStatic);
 router.get("/:id",pageStaticController.getPageStaticById);
 router.get("/detail/:slug",pageStaticController.getPageStaticBySlug);
 router.post(

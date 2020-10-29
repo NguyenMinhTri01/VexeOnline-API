@@ -231,6 +231,21 @@ const loginGoogle = (req, res, next) => {
     })
 };
 
+
+const getPaginationUsers = (req,res,next) => {
+  const page = parseInt(req.query.page);
+  const page_size = 5;
+  User.find()
+  .skip((page-1)*page_size)
+  .limit(page_size)
+  .sort({createdAt:1})
+  .then(users=>{
+    res.status(200).json(users)
+  })
+  .catch(err=>{
+    res.status(500).json(err)
+  })
+}
 module.exports = {
   postUsers,
   login,
@@ -242,5 +257,6 @@ module.exports = {
   putUserAdmin,
   loginFacebook,
   loginGoogle,
-  getCountUsers
+  getCountUsers,
+  getPaginationUsers
 }

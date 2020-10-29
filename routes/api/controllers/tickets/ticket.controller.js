@@ -44,7 +44,7 @@ const createTicket = (req, res, next) => {
         trip.save()
       ])
     })
-    .then( async ([ticket, trip]) => {
+    .then(async ([ticket, trip]) => {
       await sendBookTicketEmail(ticket._id, req.user)
       res.status(200).json(ticket)
     })
@@ -59,15 +59,15 @@ const createTicket = (req, res, next) => {
 
 const getTickets = (req, res, next) => {
   Ticket.find()
-  .sort({createdAt:-1})
-  .populate({
-    path: "tripId",
-    select: 'garageId routeId vehicleId price -_id',
-    populate:{
-      path: 'garageId routeId vehicleId',
-      select: 'name'
-    },
-  })
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "tripId",
+      select: 'garageId routeId vehicleId price -_id',
+      populate: {
+        path: 'garageId routeId vehicleId',
+        select: 'name'
+      },
+    })
     .then(tickets => {
       // tickets = tickets.map(ticket=>{
       //   return _.chain(ticket)
@@ -85,42 +85,42 @@ const getTickets = (req, res, next) => {
 }
 const getLatestTickets = (req, res, next) => {
   Ticket.find()
-  .limit(10)
-  .sort({createdAt:-1})
-  .populate({
-    path: "tripId",
-    select: 'garageId routeId vehicleId price -_id',
-    populate:{
-      path: 'garageId routeId vehicleId',
-      select: 'name'
-    },
-  })
+    .limit(10)
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "tripId",
+      select: 'garageId routeId vehicleId price -_id',
+      populate: {
+        path: 'garageId routeId vehicleId',
+        select: 'name'
+      },
+    })
     .then(tickets => {
       res.status(200).json(tickets)
     })
 }
 const getCountTickets = (req, res, next) => {
   Ticket.find()
-  .countDocuments()
+    .countDocuments()
     .then(tickets => {
-        res.status(200).json(tickets)
+      res.status(200).json(tickets)
     })
     .catch(err => {
       res.status(500).json(err)
     })
 }
-const getstatusTicketById = (req,res,next) => {
-  const {id} = req.params;
+const getstatusTicketById = (req, res, next) => {
+  const { id } = req.params;
   Ticket.findById(id)
-  .then(async ticket=>{
-      if(!ticket) return Promise.reject({
-          status: 404,
-          message: "Ticket not found"
+    .then(async ticket => {
+      if (!ticket) return Promise.reject({
+        status: 404,
+        message: "Ticket not found"
       })
-      if(ticket["statusTicket"]===0){
+      if (ticket["statusTicket"] === 0) {
         ticket["statusTicket"] = 1
-      }else if(ticket["statusTicket"]===1){
-        
+      } else if (ticket["statusTicket"] === 1) {
+
         let trip = await Trip.findById(ticket.tripId);
         if (trip.statusNumber < 2) {
           ticket["statusTicket"] = 2
@@ -134,39 +134,39 @@ const getstatusTicketById = (req,res,next) => {
         }
       }
       return ticket.save();
-  })
-  .then(ticket=>res.status(200).json(ticket))
-  .catch(err=>res.status(500).json(err))
+    })
+    .then(ticket => res.status(200).json(ticket))
+    .catch(err => res.status(500).json(err))
 }
 const getTicketById = (req, res, next) => {
-  const {id} = req.params
+  const { id } = req.params
   Ticket.findById(id)
-  .sort({createdAt:-1})
-  .populate({
-    path: "tripId",
-    select: 'garageId routeId vehicleId price startTime endTime -_id',
-    populate:{
-      path: 'garageId routeId vehicleId',
-      select: 'name',
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "tripId",
+      select: 'garageId routeId vehicleId price startTime endTime -_id',
       populate: {
-        path: 'fromStationId toStationId',
-        select: "name "
+        path: 'garageId routeId vehicleId',
+        select: 'name',
+        populate: {
+          path: 'fromStationId toStationId',
+          select: "name "
+        },
       },
-    },
-  })
-  .then(ticket => {
-    if (!ticket) return res.status(200).json({ err: true })
-    const modifiedTicket = _.chain(ticket)
-      .get('_doc')
-      .omit(['seats'])
-      .assign({
-        numberOfSeat : ticket.seats.length,
-        listSeat : ticket.seats.map(seat => seat.code).toString()
-      })
-      .value()
-    return res.status(200).json(modifiedTicket)
-  })
-  .catch(err=>err.status(500).json(err))
+    })
+    .then(ticket => {
+      if (!ticket) return res.status(200).json({ err: true })
+      const modifiedTicket = _.chain(ticket)
+        .get('_doc')
+        .omit(['seats'])
+        .assign({
+          numberOfSeat: ticket.seats.length,
+          listSeat: ticket.seats.map(seat => seat.code).toString()
+        })
+        .value()
+      return res.status(200).json(modifiedTicket)
+    })
+    .catch(err => err.status(500).json(err))
 };
 
 const getTicketByCode = (req, res, next) => {
@@ -190,8 +190,8 @@ const getTicketByCode = (req, res, next) => {
         .get('_doc')
         .omit(['seats'])
         .assign({
-          numberOfSeat : ticket.seats.length,
-          listSeat : ticket.seats.map(seat => seat.code).toString()
+          numberOfSeat: ticket.seats.length,
+          listSeat: ticket.seats.map(seat => seat.code).toString()
         })
         .value()
       return res.status(200).json(modifiedTicket)
@@ -218,89 +218,89 @@ const searchByCode = (req, res, next) => {
         .get('_doc')
         .omit(['seats'])
         .assign({
-          numberOfSeat : ticket.seats.length,
-          listSeat : ticket.seats.map(seat => seat.code).toString()
+          numberOfSeat: ticket.seats.length,
+          listSeat: ticket.seats.map(seat => seat.code).toString()
         })
         .value()
       return res.status(200).json([modifiedTicket])
     })
 };
 const cancelTicket = (req, res, next) => {
-  const {id} = req.params
+  const { id } = req.params
   let result = null
   Ticket.findById(id)
-  .populate({
-    path: 'tripId',
-    populate: {
-      path: 'garageId routeId vehicleId',
+    .populate({
+      path: 'tripId',
       populate: {
-        path: 'fromStationId toStationId',
-        select: "name "
+        path: 'garageId routeId vehicleId',
+        populate: {
+          path: 'fromStationId toStationId',
+          select: "name "
+        },
+        select: "name price"
       },
-      select: "name price"
-    },
-    //select: 'garageId routeId vehicleId price startTime endTime'
-  })
-  .then(async ticket => {
-    if (!ticket) return res.status(200).json({ err: true })
-    result = {...ticket}
-    ticket.statusTicket = 2;
-    let trip = await Trip.findById(ticket.tripId);
-    const listCanceledSeats = ticket.seats.map(seat => seat.code);
-    trip.seats.forEach((seat, index) => {
-      if (listCanceledSeats.indexOf(seat.code) != -1) {
-        trip.seats[index].isBooked = false
+      //select: 'garageId routeId vehicleId price startTime endTime'
+    })
+    .then(async ticket => {
+      if (!ticket) return res.status(200).json({ err: true })
+      result = { ...ticket }
+      ticket.statusTicket = 2;
+      let trip = await Trip.findById(ticket.tripId);
+      const listCanceledSeats = ticket.seats.map(seat => seat.code);
+      trip.seats.forEach((seat, index) => {
+        if (listCanceledSeats.indexOf(seat.code) != -1) {
+          trip.seats[index].isBooked = false
+        }
+      })
+      return Promise.all([
+        ticket.save(),
+        trip.save()
+      ])
+    })
+    .then(([ticket, trip]) => {
+      if (ticket) {
+        result = _.chain(result)
+          .get('_doc')
+          .omit(['seats', 'statusTicket'])
+          .assign({
+            statusTicket: 2,
+            numberOfSeat: ticket.seats.length,
+            listSeat: ticket.seats.map(seat => seat.code).toString()
+          })
+          .value()
+        return res.status(200).json(result)
       }
     })
-    return Promise.all([
-      ticket.save(),
-      trip.save()
-    ])
-  })
-  .then(([ticket, trip])=> {
-    if (ticket) {
-      result = _.chain(result)
-      .get('_doc')
-      .omit(['seats', 'statusTicket'])
-      .assign({
-        statusTicket : 2,
-        numberOfSeat : ticket.seats.length,
-        listSeat : ticket.seats.map(seat => seat.code).toString()
-      })
-      .value()
-      return res.status(200).json(result)
-    }
-  })
 }
 
 const getBookingHistory = (req, res, next) => {
- // if (req.user.userType === 'client' && req.user._id) {
-    const userId = req.user._id;
-    Ticket.find({ userId })
-    .sort({createdAt:-1})
+  // if (req.user.userType === 'client' && req.user._id) {
+  const userId = req.user._id;
+  Ticket.find({ userId })
+    .sort({ createdAt: -1 })
     .populate({
       path: "tripId",
       select: 'garageId routeId vehicleId price -_id',
-      populate:{
+      populate: {
         path: 'garageId routeId vehicleId',
         select: 'name'
       },
     })
-      .then(tickets => {
-        if (tickets.length===0){
-          return Promise.reject({
-            status: 400,
-            message: "Không tìm thấy vé nào"
-          });
-        } else{
-          res.status(200).json(tickets)
-        }
-        
-      })
-      .catch(err => {
-        if (err.status === 400) return res.status(err.status).json({ message: err.message })
-        return res.json(err);
-      })
+    .then(tickets => {
+      if (tickets.length === 0) {
+        return Promise.reject({
+          status: 400,
+          message: "Không tìm thấy vé nào"
+        });
+      } else {
+        res.status(200).json(tickets)
+      }
+
+    })
+    .catch(err => {
+      if (err.status === 400) return res.status(err.status).json({ message: err.message })
+      return res.json(err);
+    })
   // } else {
   //   res.status(404).json({ message: "does not exist booking history" })
   // }
@@ -319,6 +319,29 @@ const deleteTicketById = (req, res, next) => {
   } else return res.status(404).json({ message: "ticket id invalid" })
 };
 
+const getPaginationTickets = (req, res, next) => {
+  const page = parseInt(req.query.page);
+  const page_size = 5;
+  Ticket.find()
+    .skip((page - 1) * page_size)
+    .limit(page_size)
+    .sort({ createdAt: 1 })
+    .populate({
+      path: "tripId",
+      select: 'garageId routeId vehicleId price -_id',
+      populate: {
+        path: 'garageId routeId vehicleId',
+        select: 'name'
+      },
+    })
+    .then(tickets => {
+      res.status(200).json(tickets)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
+};
+
 module.exports = {
   createTicket,
   getTickets,
@@ -330,5 +353,6 @@ module.exports = {
   cancelTicket,
   getCountTickets,
   getLatestTickets,
-  searchByCode
+  searchByCode,
+  getPaginationTickets
 }

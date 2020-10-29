@@ -53,22 +53,22 @@ const getRoutes = (req, res, next) => {
                         toStationName: route.toStationId.name
                     })
                     .value()
-                })
+            })
             res.status(200).json(_routes)
         }).catch(err => {
             res.status(500).json(err)
         })
 }
-const getRoutesHot = (req,res,next) => {
-    Route.find({hot:true,status:true})
-    .limit(5)
-    .sort({createdAt:1})
-    .then(routes=>{
-        res.status(200).json(routes)
-    })
-    .catch(err => {
-        res.status(500).json(err)
-    })
+const getRoutesHot = (req, res, next) => {
+    Route.find({ hot: true, status: true })
+        .limit(5)
+        .sort({ createdAt: 1 })
+        .then(routes => {
+            res.status(200).json(routes)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
 }
 const postRoutes = (req, res, next) => {
     const newRoute = new Route(req.body);
@@ -192,7 +192,59 @@ const getHotById = (req, res, next) => {
         })
         .catch(err => res.status(500).json(err))
 
-}
+};
+
+const getPaginationRoutes = (req, res, next) => {
+    const page = parseInt(req.query.page);
+    const page_size = 5;
+    Route.find()
+        .skip((page-1)*page_size)
+        .limit(page_size)
+        .sort({createdAt:1})
+        .populate({
+            path: "fromStationId",
+            select: 'name -_id'
+        })
+        .populate({
+            path: "toStationId",
+            select: 'name -_id'
+        })
+        .then(routes => {
+            const _routes = routes.map(route => {
+                return _.chain(route)
+                    .get('_doc')
+                    .omit(['fromStationId', 'toStationId'])
+                    .assign({
+                        fromStationName: route.fromStationId.name,
+                        toStationName: route.toStationId.name
+                    })
+                    .value()
+            })
+            res.status(200).json(_routes)
+        }).catch(err => {
+            res.status(500).json(err)
+        })
+};
+
+const getCountRoutes = (req, res, next) => {
+    Route.find()
+        .countDocuments()
+        .then(routes => {
+            res.status(200).json(routes)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+};
 module.exports = {
-    getRoutes, postRoutes, putRouteById, getHotById, getStatusById, deleteRouteById, getRouteById,getRoutesHot
+    getRoutes,
+    postRoutes,
+    putRouteById,
+    getHotById,
+    getStatusById,
+    deleteRouteById,
+    getRouteById,
+    getRoutesHot,
+    getPaginationRoutes,
+    getCountRoutes
 }

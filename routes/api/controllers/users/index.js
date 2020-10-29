@@ -16,6 +16,7 @@ router.get(
   authorize(['admin']),
   userController.getUsers
 );
+router.get("/pagination",userController.getPaginationUsers);
 router.get(
   "/count",
   authenticate,

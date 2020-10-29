@@ -17,6 +17,29 @@ const getContact = (req,res,next) =>{
     })
 }
 
+const getPaginationContacts = (req, res, next) => {
+    const page = parseInt(req.query.page);
+    const PAGE_SIZE = 3;
+    Contact.find()
+        .skip((page-1)*PAGE_SIZE)
+        .limit(PAGE_SIZE)
+        .sort({createdAt:1})
+        .then(contacts => {
+            const _contacts = contacts.map(contact => {
+                return _.chain(contact)
+                    .get('_doc')
+                    .assign({
+                        denyEdit : true
+                    })
+                    .value()
+            })
+            res.status(200).json(_contacts)
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+}
+
 const getCountContact = (req,res,next) =>{
     Contact.find()
     .countDocuments()
@@ -55,5 +78,9 @@ const deleteContactById = (req,res,next) => {
 }
 
 module.exports = {
-    getContact,postContact,deleteContactById,getCountContact
+    getContact,
+    postContact,
+    deleteContactById,
+    getCountContact,
+    getPaginationContacts
 }

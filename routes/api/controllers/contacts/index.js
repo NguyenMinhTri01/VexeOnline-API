@@ -10,6 +10,7 @@ router.get(
     authorize(["admin"]),
     contactController.getContact
 );
+router.get("/pagination",contactController.getPaginationContacts)
 router.get(
     "/count",
     authenticate,

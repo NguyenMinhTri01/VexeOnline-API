@@ -7,6 +7,8 @@ const router = express.Router();
 
 
 router.get('/', stationController.getStations);
+router.get('/pagination', stationController.getPaginationStations);
+router.get('/count', stationController.getCountStation);
 router.get("/hotStations",stationController.getStationsHot);
 router.get('/:id', stationController.getStationById);
 router.get('/detail/:slug', stationController.getStationBySlug);

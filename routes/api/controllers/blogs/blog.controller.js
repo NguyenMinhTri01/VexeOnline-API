@@ -159,5 +159,16 @@ const uploadAvatar = (req, res, next) => {
     .catch (err => res.status(500).json(err));
   }
 module.exports = {
-    postBlog,getBlog,getBlogById,putBlogById,deleteBlogById,getStatusById,getHotById,uploadAvatar,getBlogBySlug,getBlogHot,getCountBlog,getPaginationBlog
+    postBlog,
+    getBlog,
+    getBlogById,
+    putBlogById,
+    deleteBlogById,
+    getStatusById,
+    getHotById,
+    uploadAvatar,
+    getBlogBySlug,
+    getBlogHot,
+    getCountBlog,
+    getPaginationBlog
 }

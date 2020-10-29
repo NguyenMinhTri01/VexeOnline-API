@@ -13,6 +13,31 @@ const getStations = (req, res, next) => {
     })
 };
 
+const getPaginationStations = (req,res,next) => {
+  const page = parseInt(req.query.page);
+  const page_size = 5;
+  Station.find()
+  .skip((page-1)*page_size)
+  .limit(page_size)
+  .sort({createdAt:1})
+  .then(stations=>{
+    res.status(200).json(stations)
+  })
+  .catch(err=>{
+    res.status(500).json(err)
+  })
+}
+
+const getCountStation = (req,res,next) => {
+  Station.find()
+  .countDocuments()
+  .then(stations=>{
+    res.status(200).json(stations)
+  })
+  .catch(err=>{
+    res.status(500).json(err)
+  })
+}
 const postStation = (req, res, next) => {
   const newStation = new Station(req.body);
   newStation.save()
@@ -173,5 +198,7 @@ module.exports = {
   updateStationHot,
   uploadAvatar,
   getStationsHot,
-  getStationBySlug
+  getStationBySlug,
+  getPaginationStations,
+  getCountStation
 }

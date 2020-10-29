@@ -7,6 +7,7 @@ const GarageSchema = new mongoose.Schema({
   avatar : {type : String, default : "VexeOnlineMedia/imageDefault/no-image_ljozla"},
   address: { type : String, required: true},
   status : {type: Boolean, default : true},
+  hot : {type: Boolean, default : false},
   content : {type : String, default : ''},
   createdAt : {type : Date, default : Date.now},
   updatedAt : {type : Date}

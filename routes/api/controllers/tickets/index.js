@@ -7,9 +7,10 @@ const { authenticate, authorize, authenticateForUser } = require("./../../../../
 const router = express.Router()
 
 router.get("/", authenticate, authorize(["admin"]), ticketController.getTickets);
+router.get('/pagination', ticketController.getPaginationTickets);
 router.get("/count", authenticate, authorize(["admin"]), ticketController.getCountTickets);
 router.get("/latest", authenticate, authorize(["admin"]), ticketController.getLatestTickets);
-router.get("/searchCode", authenticate, authorize(["admin"]), ticketController.searchByCode);
+router.get("/searchCode/:code", authenticate, authorize(["admin"]), ticketController.searchByCode);
 router.get(
   "/statusTicket/:id",
   authenticate,
