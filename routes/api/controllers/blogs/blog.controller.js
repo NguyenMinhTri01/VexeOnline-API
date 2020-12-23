@@ -12,7 +12,7 @@ const getBlog = (req, res, next) => {
 }
 const getPaginationBlog = (req, res, next) => {
     const page = parseInt(req.query.page);
-    const PAGE_SIZE = 3;
+    const PAGE_SIZE = 5;
     Blog.find()
         .skip((page-1)*PAGE_SIZE)
         .limit(PAGE_SIZE)
