@@ -7,6 +7,8 @@ const router = express.Router();
 
 
 router.get('/', vehicleController.getVehicles);
+router.get('/pagination', vehicleController.getPaginationVehicles);
+router.get('/count', vehicleController.getCountVehicles);
 router.get('/:id', vehicleController.getVehicleById);
 
 router.get(

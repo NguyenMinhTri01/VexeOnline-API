@@ -16,6 +16,32 @@ const getVehicles = (req, res, next) => {
     })
 };
 
+const getPaginationVehicles = (req, res, next) => {
+  const page = parseInt(req.query.page);
+  const page_size = 5;
+  Vehicle.find()
+  .skip((page-1)*page_size)
+  .limit(page_size)
+  .sort({createdAt:1})
+  .then(vehicles=>{
+    res.status(200).json(vehicles)
+  })
+  .catch(err=>{
+    res.status(500).json(err)
+  })
+}
+
+const getCountVehicles = (req,res,next) => {
+  Vehicle.find()
+  .countDocuments()
+  .then(vehicles=>{
+    res.status(200).json(vehicles)
+  })
+  .catch(err=>{
+    res.status(500).json(err)
+  })
+}
+
 const getVehicleById = (req, res, next) => {
   const { id } = req.params;
   Vehicle.findById(id)
@@ -202,5 +228,7 @@ module.exports = {
   putVehicle,
   uploadMultipleImage,
   saveListImagesOfVehicle,
-  deleteImageOfVehicle
+  deleteImageOfVehicle,
+  getPaginationVehicles,
+  getCountVehicles
 }

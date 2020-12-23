@@ -50,6 +50,54 @@ const getTrips = (req, res, next) => {
     })
 };
 
+const getPaginationTrips = (req, res, next) => {
+  const page = parseInt(req.query.page);
+  const page_size = 5;
+  Trip.find()
+    .populate({
+      path: "garageId",
+      select: 'name -_id'
+    })
+    .populate({
+      path: "routeId",
+      select: 'name -_id'
+    })
+    .populate({
+      path: "vehicleId",
+      select: 'name -_id'
+    })
+    .skip((page-1)*page_size)
+    .limit(page_size)
+    .sort({createdAt:1})
+    .then(trips => {
+      const _trips = trips.map(trip => {
+        const timeNow = Date.now()
+        const startTime = new Date(trip.startTime)
+        if (timeNow > startTime.getTime() && trip.statusNumber < 2) {
+          trip.statusNumber = 2
+          trip.save();
+        }
+        return _.chain(trip)
+          .get('_doc')
+          .omit(['seats', 'garageId', 'routeId', 'vehicleId'])
+          .assign({
+            availableSeatNumber: trip.seats.filter(seats => !seats.isBooked).length,
+            garageName: trip.garageId.name,
+            routeName: trip.routeId.name,
+            vehicleName: trip.vehicleId.name,
+            denyEdit: (trip.statusNumber != 0), // 1 2 3 => true
+            denyDelete: (trip.statusNumber === 1 || trip.statusNumber === 2), // 1 2 => true
+          })
+          .value()
+      })
+      res.status(200).json(_trips);
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json(err)
+    })
+};
+
 const getCountTrips = (req, res, next) => {
   Trip.find()
   .countDocuments()
@@ -369,5 +417,6 @@ module.exports = {
   updateTripStatusNumber,
   searchTrips,
   getTripByFromStation,
-  getCountTrips
+  getCountTrips,
+  getPaginationTrips
 }

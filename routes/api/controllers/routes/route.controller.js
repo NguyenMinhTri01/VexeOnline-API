@@ -49,8 +49,8 @@ const getRoutes = (req, res, next) => {
                     .get('_doc')
                     .omit(['fromStationId', 'toStationId'])
                     .assign({
-                        fromStationName: route.fromStationId.name,
-                        toStationName: route.toStationId.name
+                        fromStationName: route.fromStationId ? route.fromStationId.name : 'undefined',
+                        toStationName: route.toStationId ? route.toStationId.name : 'undefined'
                     })
                     .value()
             })
@@ -198,9 +198,6 @@ const getPaginationRoutes = (req, res, next) => {
     const page = parseInt(req.query.page);
     const page_size = 5;
     Route.find()
-        .skip((page-1)*page_size)
-        .limit(page_size)
-        .sort({createdAt:1})
         .populate({
             path: "fromStationId",
             select: 'name -_id'
@@ -209,14 +206,17 @@ const getPaginationRoutes = (req, res, next) => {
             path: "toStationId",
             select: 'name -_id'
         })
+        .skip((page-1)*page_size)
+        .limit(page_size)
+        .sort({createdAt:1})
         .then(routes => {
             const _routes = routes.map(route => {
                 return _.chain(route)
                     .get('_doc')
                     .omit(['fromStationId', 'toStationId'])
                     .assign({
-                        fromStationName: route.fromStationId.name,
-                        toStationName: route.toStationId.name
+                        fromStationName: route.fromStationId ? route.fromStationId.name : 'undefined',
+                        toStationName: route.toStationId ? route.toStationId.name : 'undefined'
                     })
                     .value()
             })
@@ -224,7 +224,7 @@ const getPaginationRoutes = (req, res, next) => {
         }).catch(err => {
             res.status(500).json(err)
         })
-};
+}
 
 const getCountRoutes = (req, res, next) => {
     Route.find()

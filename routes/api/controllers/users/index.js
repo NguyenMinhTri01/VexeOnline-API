@@ -24,7 +24,11 @@ router.get(
   userController.getCountUsers
 );
 router.get("/getAdmin",authenticate,userController.getUsersAdmin);
-router.post("/register", validatePostUser, userController.postUsers);
+router.post(
+  "/register", 
+  validatePostUser, 
+  userController.postUsers
+  );
 router.post("/login", userController.login);
 router.post("/login-facebook", userController.loginFacebook)
 router.post("/login-google", userController.loginGoogle)

@@ -6,6 +6,7 @@ const { route } = require('../vehicles');
 const router = express.Router()
 
 router.get("/", tripController.getTrips);
+router.get("/pagination", tripController.getPaginationTrips);
 router.get(
   "/count",
   authenticate,
