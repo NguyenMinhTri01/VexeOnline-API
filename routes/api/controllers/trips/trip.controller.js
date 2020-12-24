@@ -68,7 +68,7 @@ const getPaginationTrips = (req, res, next) => {
     })
     .skip((page-1)*page_size)
     .limit(page_size)
-    .sort({createdAt:1})
+    .sort({createdAt:-1})
     .then(trips => {
       const _trips = trips.map(trip => {
         const timeNow = Date.now()
@@ -321,9 +321,10 @@ const searchTrips = (req, res, next) => {
     .then(routes => {
       if (routes.length > 0) {
         let arrRouteIdNeed = routes.filter(item => (
-          item.fromStationId.province === formStation &&
-          item.toStationId.province === toStation));
+          item.fromStationId.province !==null && item.toStationId.province !== null && item.fromStationId.province === formStation && item.toStationId.province === toStation
+          ));
         arrRouteIdNeed = arrRouteIdNeed.map(item => item._id);
+        
         return Trip.find({
           $and: [
             { routeId: { $in: arrRouteIdNeed } },

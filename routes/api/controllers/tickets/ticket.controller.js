@@ -17,6 +17,9 @@ const createTicket = (req, res, next) => {
       const availableSeatCodes = trip.seats
         .filter(seat => !seat.isBooked)
         .map(seat => seat.code)
+        console.log('availableSeatCodes',availableSeatCodes);
+        console.log('seatCodes',seatCodes);
+        
       const errSeatCodes = [];
       seatCodes.forEach(code => {
         if (availableSeatCodes.indexOf(code) === -1) errSeatCodes.push(code);
@@ -45,8 +48,16 @@ const createTicket = (req, res, next) => {
       ])
     })
     .then(async ([ticket, trip]) => {
-      await sendBookTicketEmail(ticket._id, req.user)
-      res.status(200).json(ticket)
+      if (req.user != 'guest' && req.user._id) {
+        await sendBookTicketEmail(ticket._id, req.user)
+        res.status(200).json(ticket)
+        console.log('abc');
+        
+      }else{
+        await sendBookTicketEmail(ticket._id, ticket)
+        res.status(200).json(ticket)
+      }
+      
     })
     .catch(err => {
       if (err.status) {
@@ -325,7 +336,7 @@ const getPaginationTickets = (req, res, next) => {
   Ticket.find()
     .skip((page - 1) * page_size)
     .limit(page_size)
-    .sort({ createdAt: 1 })
+    .sort({ createdAt: -1 })
     .populate({
       path: "tripId",
       select: 'garageId routeId vehicleId price -_id',

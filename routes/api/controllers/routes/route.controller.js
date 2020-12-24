@@ -208,7 +208,7 @@ const getPaginationRoutes = (req, res, next) => {
         })
         .skip((page-1)*page_size)
         .limit(page_size)
-        .sort({createdAt:1})
+        .sort({createdAt:-1})
         .then(routes => {
             const _routes = routes.map(route => {
                 return _.chain(route)

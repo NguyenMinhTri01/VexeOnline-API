@@ -23,7 +23,7 @@ const getPaginationContacts = (req, res, next) => {
     Contact.find()
         .skip((page-1)*PAGE_SIZE)
         .limit(PAGE_SIZE)
-        .sort({createdAt:1})
+        .sort({createdAt:-1})
         .then(contacts => {
             const _contacts = contacts.map(contact => {
                 return _.chain(contact)

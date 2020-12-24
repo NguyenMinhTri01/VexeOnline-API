@@ -238,7 +238,7 @@ const getPaginationUsers = (req,res,next) => {
   User.find({ userType: 'client' })
   .skip((page-1)*page_size)
   .limit(page_size)
-  .sort({createdAt:1})
+  .sort({createdAt:-1})
   .then(users => {
     const _users = users.map(user => {
       return _.chain(user)

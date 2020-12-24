@@ -22,7 +22,7 @@ const getPaginationVehicles = (req, res, next) => {
   Vehicle.find()
   .skip((page-1)*page_size)
   .limit(page_size)
-  .sort({createdAt:1})
+  .sort({createdAt:-1})
   .then(vehicles=>{
     res.status(200).json(vehicles)
   })

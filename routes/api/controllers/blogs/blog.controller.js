@@ -16,7 +16,7 @@ const getPaginationBlog = (req, res, next) => {
     Blog.find()
         .skip((page-1)*PAGE_SIZE)
         .limit(PAGE_SIZE)
-        .sort({createdAt:1})
+        .sort({createdAt:-1})
         .then(blogs => {
             res.status(200).json(blogs)
         })

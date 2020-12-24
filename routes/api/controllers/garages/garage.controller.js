@@ -18,7 +18,7 @@ const getPaginationGarages = (req,res,next) => {
   Garage.find()
   .skip((page-1)*page_size)
   .limit(page_size)
-  .sort({createdAt:1})
+  .sort({createdAt:-1})
   .then(garages=>{
     res.status(200).json(garages)
   })

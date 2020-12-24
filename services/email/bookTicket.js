@@ -36,6 +36,7 @@ module.exports.sendBookTicketEmail = (ticketId, user) => {
             pass: 'VexeOnline@2020'
           }
         };
+        
         const transporter = nodemailer.createTransport(transport);
         const mailOptions = {
           from: "vexeonline365@gmail.com",
