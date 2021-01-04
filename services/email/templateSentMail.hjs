@@ -161,7 +161,7 @@
           <div class="col invoice-to">
             <div class="text-gray-light">Đến:</div>
             <h2 class="to">
-              {{user.name}}
+              {{user.fullName}}
             </h2>
             <div class="email"><a href="mailto:{{user.email}}">{{user.email}}</a></div>
           </div>
