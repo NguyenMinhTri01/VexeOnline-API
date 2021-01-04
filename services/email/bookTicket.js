@@ -40,6 +40,7 @@ module.exports.sendBookTicketEmail = (ticketId, user) => {
         const mailOptions = {
           from: "vexeonline365@gmail.com",
           to: `${user.email}`,
+          replyTo : `${user.email}`,
           subject: `Mail xác nhận đã mua vé thành công, mã vé : ${ticket.code}`,
           html: compiledTemplate.render({
             user,

@@ -50,11 +50,11 @@ const createTicket = (req, res, next) => {
     .then(async ([ticket, trip]) => {
       if (req.user != 'guest' && req.user._id) {
         
-        // await sendBookTicketEmail(ticket._id, req.user)
+        await sendBookTicketEmail(ticket._id, req.user)
         res.status(200).json(ticket) 
       }else{
 
-        // await sendBookTicketEmail(ticket._id, {fullName:customerName,email:email})
+        await sendBookTicketEmail(ticket._id, {fullName:customerName,email:email})
         res.status(200).json(ticket)
       }
       
